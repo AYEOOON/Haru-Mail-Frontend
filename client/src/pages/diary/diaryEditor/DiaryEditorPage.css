@@ -1,0 +1,254 @@
+/* 초기화 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body, #root {
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* 전체 페이지 */
+.diary-page {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 100vw;
+    align-items: flex-start; /* 상단 정렬 */
+}
+
+/* 메인 콘텐츠 */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 20px !important;
+    background-color: white;
+    width: 100%;
+}
+
+/* 제목 */
+.title-block {
+    margin-bottom: 20px;
+}
+
+.title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-top: 10px !important;
+    margin-bottom: 8px;
+}
+
+.date {
+    font-size: 14px;
+    color: #888;
+}
+
+/* editor.js */
+.diary-textarea {
+    flex: 1;
+    width: 100%;
+    max-height: 500px;
+    padding: 20px;
+    font-size: 20px;
+    border: 2px solid #eb1c24;
+    border-radius: 8px;
+    resize: none;
+    margin-bottom: 20px;
+    overflow-y: auto;
+}
+
+/* 에디터를 감싸는 div 스타일 */
+.editor-container {
+    width: 100%;
+    height: 500px;
+    margin: 0 auto;
+    border: 2px solid #eb1c24;
+    border-radius: 8px;
+    padding: 20px 60px 20px 60px;
+    box-sizing: border-box;
+    font-size: 20px;
+    overflow-y: auto;
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* 전체 블록의 중앙 정렬 해제 */
+.editor-container .ce-block,
+.editor-container .cdx-block {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    box-sizing: border-box;
+}
+
+/* 에디터 내부 텍스트 블록 */
+.editor-container .ce-paragraph {
+    width: 1100px !important;
+    max-width: 1100px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box;
+    text-align: left !important;
+}
+
+/* 버튼 */
+.button-wrapper {
+    text-align: right;
+    margin-top: auto;
+}
+
+.submit-button {
+    background-color: #eb1c24;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.submit-button:hover {
+    background-color: #c6171d;
+    transform: scale(1.1);
+}
+
+/* 모달 */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal {
+    background: white;
+    padding: 24px 32px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    font-size: 18px;
+}
+
+.modal-close-button {
+    margin-top: 16px;
+    padding: 8px 16px;
+    background-color:  #eb1c24;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* 태그 */
+.tag-section {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.selected-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 10px;
+    margin-top: 0px !important;
+}
+
+.tag {
+    background-color: #ffecec;
+    color: #eb1c24;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-size: 16px;
+    font-weight: 500;
+    border: 1.5px solid #eb1c24;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.tag:hover {
+    background-color: #eb1c24;
+    color: white;
+}
+
+/* 카테고리 */
+.category-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.category {
+    padding: 10px 18px;
+    font-size: 15px;
+    border-radius: 20px;
+    border: 2px solid #eb1c24;
+    background-color: white;
+    color: #eb1c24;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+/* 선택된 카테고리 버튼 (active 상태) */
+.category.active {
+    background-color: #eb1c24;
+    color: white;
+    border-color: #eb1c24;
+}
+
+.category:hover {
+    background-color: #eb1c24;
+    color: white;
+}
+
+.add-category-button {
+    padding: 10px 20px;
+    font-size: 15px;
+    border-radius: 20px;
+    background-color: #eb1c24;
+    color: white;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background-color 0.2s;
+}
+
+.add-category-button:hover {
+    background-color: #c3141a;
+}
+
+/* 카테고리 태그 */
+.category-tag {
+    background-color: #ffecec;
+    color: #eb1c24;
+    padding: 6px 12px;
+    margin: 4px; /* 태그 간격 추가 */
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1.2px solid #eb1c24;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+/* 카테고리 생성 */
+.new-tag-input {
+    padding: 10px 14px;
+    margin: 8px 0;
+    border-radius: 6px;
+    border: 2px solid crimson;
+    width: 220px;
+    font-size: 16px;
+    outline: none;
+}
