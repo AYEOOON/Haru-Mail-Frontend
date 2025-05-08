@@ -1,4 +1,6 @@
+// MailSetting.tsx
 import React, { useState } from 'react';
+import Header from '../header/Header'; // Header 컴포넌트 경로
 import './MailSettingPage.css';
 
 const MailSetting: React.FC = () => {
@@ -23,17 +25,7 @@ const MailSetting: React.FC = () => {
 
   return (
     <div className="webpage-layout">
-      <header className="webpage-header">
-        <div className="header-content">
-          <h1 className="logo">하루 메일</h1>
-          <div className="menu-buttons">
-            <button className="button">일기 목록</button>
-            <button className="button">일기 검색</button>
-            <button className="button">설정</button>
-            <button className="button">로그아웃</button>
-          </div>
-        </div>
-      </header>
+      <Header /> {/* 헤더 컴포넌트 사용 */}
 
       <main className="mail-setting-main">
         <section className="mail-setting-content">
