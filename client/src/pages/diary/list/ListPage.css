@@ -1,13 +1,14 @@
-/* 초기화 */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* 사용자 이름과 날짜를 위한 컨테이너 */
+.header-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 3rem; /* 간격 조정 */
 }
 
 /* 전체 레이아웃 */
 .webpage-layout {
-  flex:1;
+  flex: 1;
   font-family: 'Pretendard', sans-serif;
   min-height: 100vh;
   display: flex;
@@ -22,27 +23,12 @@
   color: #4a90e2;
 }
 
-/* 헤더 제외한 콘텐츠 전체 */
-.webpage-container {
-  display: flex;
-  flex-direction: column;
-  /* justify-content: space-between; /* 기존: 세로 방향으로 최대한 간격 벌림 */
-  justify-content: flex-start; /* 변경: 위쪽으로 정렬하여 자연스러운 흐름 유지 */
-  align-items: center; /* 기존: 가로 방향 가운데 정렬 유지 */
-  width: 100%;
-  margin-top: 5%; /* 상단 마진 증가 */
-  margin-left: 0;
-  margin-right: 0;
-  padding-bottom: 5%; /* 하단 패딩 유지 */
-}
-
-/* 상단 월, 버튼 등 */
 .calendar-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: clamp(200px, 80vw, 600px);
-  margin: 2rem auto; /* 상하 마진 증가 */
+  margin: 2rem auto;
   font-size: clamp(1rem, 3vw, 1.5rem);
 }
 
@@ -58,73 +44,63 @@
   font-weight: bold;
 }
 
-.query-button {
-  background-color: #e60023;
-  color: white;
-  padding: clamp(0.3rem, 0.6vw, 0.5rem) clamp(0.8rem, 1.5vw, 1rem);
-  border: none;
-  border-radius: 999px;
-  font-size: clamp(0.8rem, 1.5vw, 1rem);
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s;
-  width: clamp(80px, 15vw, 120px);
-  height: clamp(32px, 6vw, 40px);
-  margin-left: auto;
-  margin-bottom: 1.5rem; /* 하단 마진 증가 */
-}
-
-/* 일기 리스트 */
 .diary-list {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1.5rem; /* 아이템 간 간격 증가 */
+  gap: 1.5rem;
   overflow-y: auto;
   padding-right: 0.5rem;
-  margin-bottom: 2rem; /* 하단 마진 증가 */
-  width: clamp(200px, 80vw, 600px); /* 너비 제한 유지 */
+  margin-bottom: 2rem;
+  width: clamp(200px, 80vw, 600px);
 }
 
+/* 일기 항목 */
 .diary-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: #f1f1f1;
   border-radius: 10px;
-  padding: clamp(1rem, 2vw, 1.5rem); /* 패딩 증가 */
+  padding: clamp(1rem, 2vw, 1.5rem);
 }
 
 .date-tag {
   background-color: #e60023;
   color: white;
-  padding: clamp(0.3rem, 0.5vw, 0.5rem) clamp(0.8rem, 1vw, 1rem); /* 패딩 증가 */
+  padding: clamp(0.3rem, 0.5vw, 0.5rem) clamp(0.8rem, 1vw, 1rem);
   border-radius: 8px;
   font-size: clamp(0.8rem, 1.2vw, 1rem);
-  margin-right: 1.5rem; /* 오른쪽 마진 증가 */
+  margin-right: 1.5rem;
 }
 
 .diary-title {
-  flex-grow: 1; /* 제목이 남은 공간을 채우도록 */
-  overflow: hidden; /* 너무 길면 숨김 */
-  text-overflow: ellipsis; /* ...으로 표시 */
-  font-size: clamp(1rem, 2vw, 1.2rem); /* 폰트 크기 조정 */
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: clamp(1rem, 2vw, 1.2rem);
 }
 
 .write-button {
   background-color: #e60023;
   color: white;
-  padding: clamp(0.8rem, 1.5vw, 1.2rem) clamp(1.5rem, 2.5vw, 2rem); /* 패딩 증가 */
+  padding: clamp(0.8rem, 1.5vw, 1.2rem) clamp(1.5rem, 2.5vw, 2rem);
   border: none;
   border-radius: 999px;
-  font-size: clamp(1.2rem, 2vw, 1.4rem); /* 폰트 크기 조정 */
+  font-size: clamp(1.2rem, 2vw, 1.4rem);
   cursor: pointer;
   transition: background-color 0.3s, transform 0.3s;
-  width: clamp(180px, 40vw, 280px); /* 너비 조정 */
-  height: clamp(45px, 10vw, 65px); /* 높이 조정 */
-  margin-top: 3rem; /* 상단 마진 증가 */
-  margin-bottom: 5%; /* 하단 마진 유지 */
+  width: clamp(180px, 40vw, 280px);
+  height: clamp(45px, 10vw, 65px);
+  margin-top: 3rem;
+  margin-bottom: 5%;
   margin-left: auto;
   margin-right: auto;
+}
+
+.write-button:hover,
+.query-button:hover {
+  background-color: #d5001c;
+  transform: scale(1.1);
 }
 
 .loading {
@@ -135,91 +111,4 @@
   font-size: 1.5rem;
   color: #e60023;
   font-weight: bold;
-}
-
-.write-button:hover,
-.query-button:hover {
-  background-color: #d5001c;
-  transform: scale(1.1);
-}
-
-/* 반응형 */
-@media (max-width: 600px) {
-  .calendar-header {
-    flex-direction: column;
-    gap: 1rem; /* 간격 증가 */
-    align-items: center; /* 가운데 정렬 유지 */
-  }
-
-  .diary-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.5rem; /* 아이템 내부 간격 추가 */
-  }
-
-  .query-button {
-    margin-left: auto; /* 오른쪽 정렬 유지 */
-    margin-top: 1rem; /* 간격 조정 */
-    margin-bottom: 1rem; /* 간격 조정 */
-  }
-}
-
-@media (max-width: 480px) {
-  .calendar-header {
-    font-size: 1.2rem;
-  }
-  .query-button {
-    font-size: 0.9rem;
-    width: 90px;
-    height: 35px;
-  }
-  .write-button {
-    font-size: 1rem;
-    width: 200px;
-    height: 50px;
-  }
-}
-
-@media (min-width: 601px) and (max-width: 1024px) {
-  .calendar-header {
-    flex-direction: row; /* 다시 가로로 배치 */
-    gap: 1.5rem; /* 간격 증가 */
-  }
-  .diary-item {
-    flex-direction: row; /* 다시 가로로 배치 */
-    align-items: center;
-    gap: 1rem; /* 아이템 내부 간격 추가 */
-  }
-}
-
-@media (min-width: 1441px) {
-  .calendar-header {
-    width: 700px; /* 최대 너비 증가 */
-  }
-  .webpage-container {
-    margin-top: 7%; /* 더 넓은 간격 */
-    gap: 10%; /* 내부 요소 간 간격 증가 (justify-content: space-between; 유지 시) */
-  }
-  .diary-list {
-    width: 700px; /* 최대 너비 증가 */
-    gap: 2rem; /* 아이템 간 간격 증가 */
-  }
-  .write-button {
-    width: 300px; /* 너비 증가 */
-    height: 70px; /* 높이 증가 */
-    font-size: 1.4rem;
-  }
-}
-
-.logo {
-    font-size: clamp(1.4rem, 2vw, 1.8rem); /* 폰트 크기 조정 */
-    font-weight: bold;
-    color: white;
-}
-
-.nav a {
-    margin-left: clamp(15px, 2vw, 25px); /* 간격 증가 */
-    text-decoration: none;
-    color: white;
-    font-size: clamp(1rem, 1.5vw, 1.2rem); /* 폰트 크기 조정 */
 }

@@ -19,6 +19,8 @@ const ListPage: React.FC = () => {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [diaries, setDiaries] = useState<DiaryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentYear, setCurrentYear] = useState<number>(0);
+  const [currentMonth, setCurrentMonth] = useState<number>(0);
 
   // 쿠키에서 accessToken 꺼내는 함수
   const getAccessTokenFromCookies = (): string => {
@@ -32,7 +34,31 @@ const ListPage: React.FC = () => {
     );
   };
 
+  // 월 이전으로 이동
+  const handlePrevMonth = () => {
+    if (currentMonth === 1) {
+      setCurrentMonth(12);
+      setCurrentYear(currentYear - 1);
+    } else {
+      setCurrentMonth(currentMonth - 1);
+    }
+  };
+
+  // 월 다음으로 이동
+  const handleNextMonth = () => {
+    if (currentMonth === 12) {
+      setCurrentMonth(1);
+      setCurrentYear(currentYear + 1);
+    } else {
+      setCurrentMonth(currentMonth + 1);
+    }
+  };
+
   useEffect(() => {
+    const now = new Date();
+    setCurrentYear(now.getFullYear());
+    setCurrentMonth(now.getMonth() + 1); // 월은 0부터 시작하므로 +1 필요
+
     async function fetchData() {
       const token = getAccessTokenFromCookies();
       try {
@@ -69,7 +95,7 @@ const ListPage: React.FC = () => {
     }
 
     fetchData();
-  }, []);
+  }, [currentYear, currentMonth]);
 
   if (loading) {
     return <div className="loading">로딩 중...</div>;
@@ -80,17 +106,19 @@ const ListPage: React.FC = () => {
       <Header /> {/* 공통 헤더 사용 */}
 
       <main className="webpage-container">
-        <h2>
-          <span className="username">{user?.username ?? '사용자'}</span> 님이 작성하신 일기 목록이에요!
-        </h2>
+        <div className="header-container">
+          <h2>
+            <span className="username">{user?.username ?? '사용자'}</span> 님이 작성하신 일기 목록이에요!
+          </h2>
 
-        <div className="calendar-header">
-          <button className="arrow">&lt;</button>
-          <span className="month-label">2025년 3월</span>
-          <button className="arrow">&gt;</button>
+          <div className="calendar-header">
+            <button className="arrow" onClick={handlePrevMonth}>&lt;</button>
+            <span className="month-label">
+              {currentYear}년 {currentMonth}월
+            </span>
+            <button className="arrow" onClick={handleNextMonth}>&gt;</button>
+          </div>
         </div>
-
-        <button className="query-button">조회</button>
 
         <section id="diary-list" className="diary-list">
           {diaries.length === 0 ? (
@@ -99,7 +127,11 @@ const ListPage: React.FC = () => {
             diaries.map(diary => {
               const date = new Date(diary.createdAt);
               return (
-                <div key={diary.id} className="diary-item">
+                <div
+                  key={diary.id}
+                  className="diary-item"
+                  onClick={() => navigate(`/diary/${diary.id}`)}
+                >
                   <div className="date-tag">{date.getDate()}일</div>
                   <div className="diary-title">{diary.title}</div>
                   <div className="arrow">→</div>
@@ -108,9 +140,10 @@ const ListPage: React.FC = () => {
             })
           )}
         </section>
-        <button className="write-button"
-        onClick={() => navigate('/editor')}
-        >일기 작성하기 ✏️</button>
+
+        <button className="write-button" onClick={() => navigate('/editor')}>
+          일기 작성하기 ✏️
+        </button>
       </main>
     </div>
   );
