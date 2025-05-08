@@ -1,6 +1,5 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
 import HomePage from './pages/home/HomePage';
 import SuccessPage from './pages/success/SuccessPage';
 import ListPage from './pages/diary/list/ListPage';
@@ -16,6 +15,7 @@ function App() {
         <Route path="/list" element={<ListPage />} />
         <Route path="/setting" element={<SettingPage />} />
         <Route path="/editor" element={<EditorPage />} />
+        <Route path="/detail" element={<DiaryDetailPage />} />
       </Routes>
     </Router>
   );
