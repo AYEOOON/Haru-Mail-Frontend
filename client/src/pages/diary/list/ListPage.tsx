@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Header from '../../header/Header';  // Header 컴포넌트 경로
 import './ListPage.css';
+import { useNavigate } from 'react-router-dom';
 
 interface DiaryItem {
   id: number;
@@ -14,6 +15,7 @@ interface UserInfo {
 }
 
 const ListPage: React.FC = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<UserInfo | null>(null);
   const [diaries, setDiaries] = useState<DiaryItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -106,8 +108,9 @@ const ListPage: React.FC = () => {
             })
           )}
         </section>
-
-        <button className="write-button">일기 작성하기 ✏️</button>
+        <button className="write-button"
+        onClick={() => navigate('/editor')}
+        >일기 작성하기 ✏️</button>
       </main>
     </div>
   );
