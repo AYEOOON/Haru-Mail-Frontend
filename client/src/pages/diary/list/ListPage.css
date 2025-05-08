@@ -1,0 +1,114 @@
+/* 사용자 이름과 날짜를 위한 컨테이너 */
+.header-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 3rem; /* 간격 조정 */
+}
+
+/* 전체 레이아웃 */
+.webpage-layout {
+  flex: 1;
+  font-family: 'Pretendard', sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  width: 100vw;
+}
+
+.username {
+  font-weight: bold;
+  color: #4a90e2;
+}
+
+.calendar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: clamp(200px, 80vw, 600px);
+  margin: 2rem auto;
+  font-size: clamp(1rem, 3vw, 1.5rem);
+}
+
+.arrow {
+  background: none;
+  border: none;
+  font-size: clamp(1.2rem, 4vw, 2rem);
+  cursor: pointer;
+}
+
+.month-label {
+  font-size: clamp(1rem, 2.5vw, 1.3rem);
+  font-weight: bold;
+}
+
+.diary-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  margin-bottom: 2rem;
+  width: clamp(200px, 80vw, 600px);
+}
+
+/* 일기 항목 */
+.diary-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f1f1f1;
+  border-radius: 10px;
+  padding: clamp(1rem, 2vw, 1.5rem);
+}
+
+.date-tag {
+  background-color: #e60023;
+  color: white;
+  padding: clamp(0.3rem, 0.5vw, 0.5rem) clamp(0.8rem, 1vw, 1rem);
+  border-radius: 8px;
+  font-size: clamp(0.8rem, 1.2vw, 1rem);
+  margin-right: 1.5rem;
+}
+
+.diary-title {
+  flex-grow: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: clamp(1rem, 2vw, 1.2rem);
+}
+
+.write-button {
+  background-color: #e60023;
+  color: white;
+  padding: clamp(0.8rem, 1.5vw, 1.2rem) clamp(1.5rem, 2.5vw, 2rem);
+  border: none;
+  border-radius: 999px;
+  font-size: clamp(1.2rem, 2vw, 1.4rem);
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  width: clamp(180px, 40vw, 280px);
+  height: clamp(45px, 10vw, 65px);
+  margin-top: 3rem;
+  margin-bottom: 5%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.write-button:hover,
+.query-button:hover {
+  background-color: #d5001c;
+  transform: scale(1.1);
+}
+
+.loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.5rem;
+  color: #e60023;
+  font-weight: bold;
+}

@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import HomePage from './pages/home/HomePage';  // 경로 수정
-import SuccessPage from './pages/success/SuccessPage'; // 성공 페이지 경로도 확인
-import EditorPage from './pages/diary/diaryEditor/DiaryEditorPage.tsx';
-import DiaryDetailPage from "./pages/diary/diaryDetail/DiaryDetailPage.tsx";
+import HomePage from './pages/home/HomePage';
+import SuccessPage from './pages/success/SuccessPage';
+import ListPage from './pages/diary/list/ListPage';
+import SettingPage from './pages/setting/MailSettingPage';
+import EditorPage from './pages/diary/diaryEditor/DiaryEditorPage';
 
 function App() {
   return (
@@ -11,6 +12,8 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/success" element={<SuccessPage />} />
+        <Route path="/list" element={<ListPage />} />
+        <Route path="/setting" element={<SettingPage />} />
         <Route path="/editor" element={<EditorPage />} />
         <Route path="/detail" element={<DiaryDetailPage />} />
       </Routes>

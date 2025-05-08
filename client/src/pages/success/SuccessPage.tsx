@@ -35,6 +35,29 @@ const SuccessPage: React.FC = () => {
       ?.substring(name.length) ?? '';
   };
 
+  const handleSendTestEmail = () => {
+    fetch('http://localhost:8080/api/mail/send', { // 테스트 전용 엔드포인트로 변경
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + getAccessTokenFromCookies(),
+      },
+      credentials: 'include',
+    })
+      .then((response) => {
+        if (response.ok) {
+          alert('테스트 메일 발송 요청 성공!');
+        } else {
+          return response.json().then((data) => {
+            alert(`테스트 메일 발송 요청 실패: ${data.message || response.statusText}`);
+          });
+        }
+      })
+      .catch((error) => {
+        console.error('테스트 메일 발송 오류:', error);
+        alert('테스트 메일 발송 중 오류가 발생했습니다.');
+      });
+  };
+
   if (!user) {
     return <div>Loading...</div>;
   }
@@ -43,6 +66,7 @@ const SuccessPage: React.FC = () => {
     <div>
       <h1>Welcome, {user.username}!</h1>
       <p>Email: {user.email}</p>
+      <button onClick={handleSendTestEmail}>오늘의 일기 메일로 보내기</button>
     </div>
   );
 };

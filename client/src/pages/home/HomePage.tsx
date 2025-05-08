@@ -20,7 +20,7 @@ const WebPage: React.FC = () => {
     <div className="webpage-layout">
       <header className="webpage-header">
         <div className="header-content">
-          <h1 className="logo">하루 메일</h1>
+          <h1 className="homepage-logo">하루 메일</h1>
           <button className="login-button">로그인</button>
         </div>
       </header>

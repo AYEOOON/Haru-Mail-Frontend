@@ -29,7 +29,7 @@
   box-sizing: border-box;
 }
 
-.logo {
+.homepage-logo {
   font-size: 1.8rem;
   font-weight: bold;
   margin: 0;
@@ -175,8 +175,6 @@
 .google-login:hover {
   background-color: #3367d6;
 }
-
-
 
 .close-button {
   background: none;
