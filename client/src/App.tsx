@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/home/HomePage';  // 경로 수정
 import SuccessPage from './pages/success/SuccessPage'; // 성공 페이지 경로도 확인
 import EditorPage from './pages/diary/diaryEditor/DiaryEditorPage.tsx';
+import DiaryDetailPage from "./pages/diary/diaryDetail/DiaryDetailPage.tsx";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/editor" element={<EditorPage />} />
+        <Route path="/detail" element={<DiaryDetailPage />} />
       </Routes>
     </Router>
   );
