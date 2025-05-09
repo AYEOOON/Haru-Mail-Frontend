@@ -5,6 +5,7 @@ import SuccessPage from './pages/success/SuccessPage';
 import ListPage from './pages/diary/list/ListPage';
 import SettingPage from './pages/setting/MailSettingPage';
 import EditorPage from './pages/diary/diaryEditor/DiaryEditorPage';
+import DiaryDetailPage from './pages/diary/diaryDetail/DiaryDetailPage';
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
         <Route path="/success" element={<SuccessPage />} />
         <Route path="/list" element={<ListPage />} />
         <Route path="/setting" element={<SettingPage />} />
-        <Route path="/editor" element={<EditorPage />} />
+        <Route path="/editor/:questionText" element={<EditorPage />} />
         <Route path="/detail" element={<DiaryDetailPage />} />
       </Routes>
     </Router>

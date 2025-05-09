@@ -5,11 +5,29 @@
     box-sizing: border-box;
 }
 
-html, body, #root {
+/*html, body, #root {*/
+/*    height: 100%;*/
+/*    width: 100%;*/
+/*    overflow-y: auto;*/
+/*    overflow-x: hidden;*/
+/*}*/
+
+/* #root 영역에서 스크롤 제어 */
+#root {
+    position: relative;  /* 자식 요소가 잘 보이도록 설정 */
     height: 100%;
     width: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
+    overflow-x: hidden;  /* 가로 스크롤바 숨김 */
+    overflow-y: auto;    /* 세로 스크롤바 필요 시 표시 */
+}
+
+/* body와 html의 설정 */
+html, body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;    /* 불필요한 스크롤바 숨김 */
 }
 
 /* 전체 페이지 */
@@ -32,16 +50,57 @@ html, body, #root {
     width: 100%;
 }
 
+/* 헤더 */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #eb1c24;
+    padding: 15px 30px;
+    color: white;
+    width: 100%;
+}
+
+.logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+}
+
+.nav a {
+    margin-left: 20px;
+    text-decoration: none;
+    color: white;
+    font-size: 14px;
+}
+
 /* 제목 */
 .title-block {
     margin-bottom: 20px;
 }
 
 .title {
-    font-size: 24px  !important;
+    font-size: 24px !important;
     font-weight: bold;
     margin-top: 10px !important;
     margin-bottom: 8px;
+    line-height: 1.2; /* 제목의 라인 높이 */
+}
+
+.title-input {
+    font-size: 24px;
+    font-weight: bold;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    outline: none;
+    width: 100%;
+    margin-top: 10px !important;
+    margin-bottom: 8px !important;
+    padding: 5px 0; /* 위아래 패딩 조정 */
+    height: 32px; /* 높이를 명시적으로 맞춤 */
+    line-height: 1.2; /* 제목과 입력 필드의 라인 높이 맞추기 */
+    box-sizing: border-box; /* padding 포함 크기 */
+    vertical-align: middle; /* 수직 정렬 */
 }
 
 .date {
@@ -66,7 +125,7 @@ html, body, #root {
 /* 에디터를 감싸는 div 스타일 */
 .editor-container {
     width: 100%;
-    height: 500px;
+    height: 450px !important;
     margin: 0 auto;
     border: 2px solid #eb1c24;
     border-radius: 8px;
@@ -97,10 +156,11 @@ html, body, #root {
     text-align: left !important;
 }
 
-/* 버튼 */
+/* 버튼 관련 스타일 */
 .button-wrapper {
+    position: relative;  /* 버튼이 보일 수 있도록 설정 */
     text-align: right;
-    margin-top: auto;
+    /*margin-top: 0px;  !* 여기에서 'auto' 대신 숫자 값으로 마진을 설정 *!*/
 }
 
 .submit-button {
@@ -155,7 +215,7 @@ html, body, #root {
 /* 태그 */
 .tag-section {
     margin-top: 10px;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .selected-tags {
