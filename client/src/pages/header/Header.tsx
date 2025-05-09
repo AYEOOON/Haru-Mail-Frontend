@@ -19,7 +19,6 @@ const Header: React.FC = () => {
     // 마운트 시 토큰을 상태로 저장
     useEffect(() => {
         const accessToken = getAccessTokenFromCookies();
-        console.log('읽어온 accessToken:', accessToken); // 디버깅용
         setToken(accessToken);
     }, []);
 
