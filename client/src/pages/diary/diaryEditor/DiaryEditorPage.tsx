@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
+import { useParams } from 'react-router-dom';
 import Header from '../../header/Header.tsx';
 import {destroyEditor, getEditorData, getFormattedToday, initializeEditor} from './DiaryEditor.ts';
 import './DiaryEditorPage.css';
@@ -17,9 +18,21 @@ export const DiaryEditorPage: React.FC = () => {
     const [isAddingTag, setIsAddingTag] = useState(false); // + 버튼 클릭 여부
     const [newTagName, setNewTagName] = useState(""); // 입력 중인 태그 이름
 
+    // URL에서 받아온 질문 제목을 useState로 초기화
+    const { questionText } = useParams<{ questionText: string }>();
+
+    const [isEditingTitle, setIsEditingTitle] = useState(false);
+    // 초기값을 URL에서 받은 타이틀로 설정
+    const [title, setTitle] = useState(questionText || "📬 오늘 가장 인상 깊었던 순간은?");
+
+
     const formattedDate = getFormattedToday(); // 오늘 날짜 포맷팅
 
     useEffect(() => {
+        if (questionText) {
+            setTitle(decodeURIComponent(questionText) + '?'); // URL 파라미터로 전달된 타이틀을 상태에 반영
+        }
+
         if (editorContainerRef.current) { // 에디터 초기화
             initializeEditor(editorContainerRef.current);
         }
@@ -47,6 +60,9 @@ export const DiaryEditorPage: React.FC = () => {
                     ...prev,
                     '기타': newTag
                 }));
+
+                setNewTagName(''); // 태그 입력 초기화
+                setIsAddingTag(false);
             })
             .catch(error => {
                 console.error('기타 태그 불러오기 실패:', error);
@@ -55,16 +71,15 @@ export const DiaryEditorPage: React.FC = () => {
         return () => {
             destroyEditor();
         };
-    }, []);
+    }, [questionText]);
 
     // 일기 저장-> 콘솔 출력
     const handleSave = async () => {
-        // title 저장 필요
         const content = await getEditorData();
         // 토큰, userId 가져오기 필요
 
         const diaryData = {
-            title: "오늘의 일기", // title을 직접 입력받고 싶으면 input 필드에서 받아오면 됨
+            title: title,
             content: content,
             userId: 1 // 1로 고정
         };
@@ -151,7 +166,7 @@ export const DiaryEditorPage: React.FC = () => {
                     console.log("태그가 성공적으로 추가되었습니다:", data);
 
                     const createdTag = {
-                        id: data.tagId,  // 서버에서 반환된 ID
+                        id: data.id,  // 서버에서 반환된 ID
                         emoji: '🏷️',  // 임시
                         label: data.name
                     };
@@ -213,11 +228,40 @@ export const DiaryEditorPage: React.FC = () => {
         console.log("남은 태그:", updatedTags); // 디버깅용
     };
 
+    const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setTitle(e.target.value);
+    };
+
+    const handleTitleBlur = () => {
+        setIsEditingTitle(false);
+    };
+
+    const handleTitleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            setIsEditingTitle(false);
+        }
+    };
+
     return (
         <div className="diary-page">
-            <Header />
+            <Header/>
             <main className="main-content">
-                <h1 className="title">📬 오늘 가장 인상 깊었던 순간은?</h1> {/* 오늘의 질문 */}
+                {isEditingTitle ? (
+                    <input
+                        className="title-input"
+                        type="text"
+                        value={title}
+                        onChange={handleTitleChange}
+                        onBlur={handleTitleBlur}
+                        onKeyDown={handleTitleKeyDown}
+                        autoFocus
+                    />
+                ) : (
+                    <h1 className="title" onClick={() => setIsEditingTitle(true)}>
+                        {title}
+                    </h1>
+                )}
+                {/*<h1 className="title">📬 오늘 가장 인상 깊었던 순간은?</h1> /!* 오늘의 질문 *!/*/}
                 <p className="date">{formattedDate}</p> {/* 자동 날짜 표시 */}
                 <div
                     className="editor-container"
