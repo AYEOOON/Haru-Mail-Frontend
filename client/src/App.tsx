@@ -5,6 +5,8 @@ import SuccessPage from './pages/success/SuccessPage';
 import ListPage from './pages/diary/list/ListPage';
 import SettingPage from './pages/setting/MailSettingPage';
 import EditorPage from './pages/diary/diaryEditor/DiaryEditorPage';
+import DiaryDetailPage from './pages/diary/diaryDetail/DiaryDetailPage';
+
 
 function App() {
   return (
