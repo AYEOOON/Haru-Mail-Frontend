@@ -38,7 +38,7 @@ html, body, #root {
 }
 
 .title {
-    font-size: 24px;
+    font-size: 24px  !important;
     font-weight: bold;
     margin-top: 10px !important;
     margin-bottom: 8px;
@@ -162,7 +162,7 @@ html, body, #root {
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 20px !important;
     margin-top: 0px !important;
 }
 
@@ -195,7 +195,8 @@ html, body, #root {
     font-size: 15px;
     border-radius: 20px;
     border: 2px solid #eb1c24;
-    background-color: white;
+    //background-color: white;
+    background-color: #ffecec;
     color: #eb1c24;
     cursor: pointer;
     transition: all 0.2s;
