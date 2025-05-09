@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 interface DiaryItem {
   id: number;
   title: string;
-  createdAt: string;
+  date: string;
 }
 
 interface UserInfo {
@@ -34,34 +34,41 @@ const ListPage: React.FC = () => {
     );
   };
 
-  // 월 이전으로 이동
+  // 이전 달
   const handlePrevMonth = () => {
-    if (currentMonth === 1) {
-      setCurrentMonth(12);
-      setCurrentYear(currentYear - 1);
-    } else {
-      setCurrentMonth(currentMonth - 1);
-    }
+    setCurrentMonth(prevMonth => {
+      if (prevMonth === 1) {
+        setCurrentYear(prevYear => prevYear - 1);
+        return 12;
+      } else {
+        return prevMonth - 1;
+      }
+    });
   };
 
-  // 월 다음으로 이동
+  // 다음 달
   const handleNextMonth = () => {
-    if (currentMonth === 12) {
-      setCurrentMonth(1);
-      setCurrentYear(currentYear + 1);
-    } else {
-      setCurrentMonth(currentMonth + 1);
-    }
+    setCurrentMonth(prevMonth => {
+      if (prevMonth === 12) {
+        setCurrentYear(prevYear => prevYear + 1);
+        return 1;
+      } else {
+        return prevMonth + 1;
+      }
+    });
   };
 
   useEffect(() => {
     const now = new Date();
     setCurrentYear(now.getFullYear());
     setCurrentMonth(now.getMonth() + 1); // 월은 0부터 시작하므로 +1 필요
+  }, []);
 
+  useEffect(() => {
     async function fetchData() {
       const token = getAccessTokenFromCookies();
       try {
+        setLoading(true);
         // 1) 사용자 정보 호출
         const userRes = await fetch('http://localhost:8080/auth/me', {
           method: 'GET',
@@ -75,17 +82,22 @@ const ListPage: React.FC = () => {
         const userData: UserInfo = await userRes.json();
         setUser(userData);
 
-        // 2) 일기 목록 호출
-        const diaryRes = await fetch('http://localhost:8080/diary/list', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
-          },
-          credentials: 'include',
-        });
+        // 2) 월과 연도를 쿼리 파라미터로 전달하여 일기 목록 호출
+        const diaryRes = await fetch(
+          `http://localhost:8080/diary/list?year=${currentYear}&month=${currentMonth}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+            },
+            credentials: 'include',
+          }
+        );
         if (!diaryRes.ok) throw new Error('Diary list fetch failed');
         const diaryData: DiaryItem[] = await diaryRes.json();
+
+        console.log('Received Diary Data:', diaryData);
         setDiaries(diaryData);
       } catch (error) {
         console.error('API 호출 오류:', error);
@@ -95,7 +107,7 @@ const ListPage: React.FC = () => {
     }
 
     fetchData();
-  }, [currentYear, currentMonth]);
+  }, [currentYear, currentMonth]);  // currentYear와 currentMonth가 변경될 때마다 fetchData 실행
 
   if (loading) {
     return <div className="loading">로딩 중...</div>;
@@ -121,11 +133,13 @@ const ListPage: React.FC = () => {
         </div>
 
         <section id="diary-list" className="diary-list">
-          {diaries.length === 0 ? (
+          {loading ? (
+            <div className="loading">로딩 중...</div>
+          ) : diaries.length === 0 ? (
             <p className="empty">작성된 일기가 없습니다.</p>
           ) : (
             diaries.map(diary => {
-              const date = new Date(diary.createdAt);
+              const date = new Date(diary.date);
               return (
                 <div
                   key={diary.id}
