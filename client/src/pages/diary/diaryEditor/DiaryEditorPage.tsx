@@ -18,15 +18,13 @@ export const DiaryEditorPage: React.FC = () => {
     const [isAddingTag, setIsAddingTag] = useState(false); // + 버튼 클릭 여부
     const [newTagName, setNewTagName] = useState(""); // 입력 중인 태그 이름
 
-    // URL에서 받아온 질문 제목을 useState로 초기화
-    const { questionText } = useParams<{ questionText: string }>();
-
-    const [isEditingTitle, setIsEditingTitle] = useState(false);
-    // 초기값을 URL에서 받은 타이틀로 설정
-    const [title, setTitle] = useState(questionText || "📬 오늘 가장 인상 깊었던 순간은?");
-
-
     const formattedDate = getFormattedToday(); // 오늘 날짜 포맷팅
+
+    const { questionText } = useParams<{ questionText: string }>(); // URL에서 받아온 질문 제목을 useState로 초기화
+    const [isEditingTitle, setIsEditingTitle] = useState(false);
+    const [title, setTitle] = useState(questionText || "📬 오늘 가장 인상 깊었던 순간은?");  // 초기값을 URL에서 받은 타이틀로 설정
+
+    const accessToken = localStorage.getItem("accessToken"); // 저장된 토큰 가져오기
 
     useEffect(() => {
         if (questionText) {
@@ -38,7 +36,12 @@ export const DiaryEditorPage: React.FC = () => {
         }
 
         // 기타 태그 불러오기
-        fetch('http://localhost:8080/category/6/1') // 사용자 ID: 1로 고정
+        fetch('http://localhost:8080/category/6' , {
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            },
+            credentials: "include"
+        })
             .then(async response => {
                 if (response.status === 204) {
                     return []; // 내용 없을 때 빈 배열
@@ -98,8 +101,9 @@ export const DiaryEditorPage: React.FC = () => {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    // access 토큰
+                    "Authorization": `Bearer ${accessToken}`
                 },
+                credentials: "include",
                 body: JSON.stringify(requestData),
             });
 
@@ -157,7 +161,7 @@ export const DiaryEditorPage: React.FC = () => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    // Access Token 추가 필요
+                    'Authorization': `Bearer ${accessToken}`
                 },
                 body: JSON.stringify(newTag), // newTag를 JSON 형식으로 변환하여 body에 추가
             })
@@ -244,7 +248,7 @@ export const DiaryEditorPage: React.FC = () => {
 
     return (
         <div className="diary-page">
-            <Header/>
+            <Header />
             <main className="main-content">
                 {isEditingTitle ? (
                     <input
