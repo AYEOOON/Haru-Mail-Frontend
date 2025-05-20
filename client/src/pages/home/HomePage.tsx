@@ -20,8 +20,10 @@ const WebPage: React.FC = () => {
     <div className="webpage-layout">
       <header className="webpage-header">
         <div className="header-content">
-          <h1 className="homepage-logo">하루 메일</h1>
-          <button className="login-button">로그인</button>
+          <a href="/" className="homepage-logo" style={{ textDecoration: 'none' }}>
+            <h2>하루 메일</h2>
+          </a>
+          <button className="login-button" onClick={handleGoogleLogin}>로그인</button>
         </div>
       </header>
 
