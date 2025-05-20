@@ -29,10 +29,18 @@
   box-sizing: border-box;
 }
 
+
 .homepage-logo {
-  font-size: 1.8rem;
+  font-size: 20px;
   font-weight: bold;
-  margin: 0;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
+}
+
+.homepage-logo:hover {
+  opacity: 0.8;
+  transition: 0.2s;
   color: #333;
 }
 
