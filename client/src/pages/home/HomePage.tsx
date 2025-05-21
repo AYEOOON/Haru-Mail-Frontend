@@ -13,6 +13,19 @@ const WebPage: React.FC = () => {
   };
 
   const handleGoogleLogin = () => {
+    if (!isAgreed) return;
+
+    // 로그인 전에 사용자 설정 정보 임시 저장
+    localStorage.setItem("subscription_frequency", selectedFrequency);
+    localStorage.setItem("subscription_agreement", isAgreed);
+
+    // 구글 OAuth로 이동
+    window.location.href = "http://localhost:8080/login/oauth2/code/google";
+  };
+
+  // 기존 로그인과 별도로 단순 로그인용 함수 추가
+  const handleJustLogin = () => {
+    // 수신 주기 정보 없이 로그인만 수행
     window.location.href = "http://localhost:8080/login/oauth2/code/google";
   };
 
@@ -23,7 +36,7 @@ const WebPage: React.FC = () => {
           <a href="/" className="homepage-logo" style={{ textDecoration: 'none' }}>
             <h2>하루 메일</h2>
           </a>
-          <button className="login-button" onClick={handleGoogleLogin}>로그인</button>
+          <button className="login-button" onClick={handleJustLogin}>로그인</button>
         </div>
       </header>
 
