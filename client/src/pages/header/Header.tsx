@@ -58,7 +58,7 @@ const Header: React.FC = () => {
 
     return (
         <header className="header">
-            <div className="logo">하루 메일</div>
+            <Link to="/" className="logo">하루 메일</Link>
             <nav className="nav">
                 <Link to="/list">일기 목록</Link>
                 <Link to="/search">일기 검색</Link>
