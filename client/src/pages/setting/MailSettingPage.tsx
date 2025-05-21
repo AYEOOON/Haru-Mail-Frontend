@@ -1,26 +1,44 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../header/Header'; // Header 컴포넌트 경로
+import Header from '../header/Header';
 import './MailSettingPage.css';
+import { useNavigate } from 'react-router-dom';
 
 const MailSetting: React.FC = () => {
+  const navigate = useNavigate();
   const [selectedOption, setSelectedOption] = useState<string>('daily');
-  const [token, setToken] = useState<string>(''); // 토큰 상태 추가
+  const [loading, setLoading] = useState(true);
 
-  // 쿠키에서 토큰을 읽는 함수
-  const getAccessTokenFromCookies = (): string => {
-    const name = 'accessToken=';
-    const decoded = decodeURIComponent(document.cookie);
-    return decoded
-      .split('; ')
-      .find((row) => row.startsWith(name))
-      ?.substring(name.length) ?? '';
-  };
-
-  // 마운트 시 토큰 상태로 저장
   useEffect(() => {
-    const accessToken = getAccessTokenFromCookies();
-    setToken(accessToken);
-  }, []);
+    async function checkAuthStatus() {
+      try {
+        setLoading(true);
+        const userRes = await fetch('http://localhost:8080/auth/me', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        });
+
+        if (!userRes.ok) {
+          // 인증 실패 (예: 401 Unauthorized) 시 로그인 페이지로 리다이렉트
+          console.error('사용자 인증 실패:', userRes.status, userRes.statusText);
+          alert('로그인이 필요하거나 세션이 만료되었습니다. 다시 로그인해주세요.');
+          navigate('/');
+          return;
+        }
+
+      } catch (error) {
+        console.error('인증 상태 확인 중 오류 발생:', error);
+        alert('페이지 로딩 중 오류가 발생했습니다. 다시 로그인해주세요.');
+        navigate('/');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    checkAuthStatus();
+  }, [navigate]);
 
   const mailOptions = [
     { value: 'daily', label: '매일 받아 볼래요! (주 7회)' },
@@ -36,12 +54,8 @@ const MailSetting: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!token) {
-      console.log('로그인된 사용자가 아닙니다.');
-      alert('로그인 후 다시 시도해 주세요.');
-      return;
-    }
-
+    // handleSubmit 시점에서도 다시 한번 인증 확인 (불필요할 수 있지만, 확실성을 위해)
+    // 혹은 API 호출 자체가 401을 반환할 때 처리
     try {
       const response = await fetch('http://localhost:8080/api/mail/settings', {
         method: 'POST',
@@ -53,6 +67,12 @@ const MailSetting: React.FC = () => {
       });
 
       if (!response.ok) {
+        // API 호출 실패 시 로그인 페이지로 리다이렉트 (인증 문제로 가정)
+        if (response.status === 401) {
+          alert('세션이 만료되어 설정을 저장할 수 없습니다. 다시 로그인해주세요.');
+          navigate('/');
+          return;
+        }
         const errorData = await response.json();
         console.error('설정 저장 실패:', errorData);
         alert('설정 저장에 실패했습니다.');
@@ -63,8 +83,13 @@ const MailSetting: React.FC = () => {
     } catch (error) {
       console.error('서버와의 통신 중 오류 발생:', error);
       alert('서버와의 통신에 문제가 발생했습니다.');
+      navigate('/');
     }
   };
+
+  if (loading) {
+    return <div className="loading">로딩 중...</div>;
+  }
 
   return (
     <div className="webpage-layout">

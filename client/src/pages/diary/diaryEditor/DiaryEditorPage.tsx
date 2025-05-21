@@ -1,86 +1,115 @@
-import React, {useEffect, useRef, useState} from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../../header/Header.tsx';
-import {destroyEditor, getEditorData, getFormattedToday, initializeEditor} from './DiaryEditor.ts';
+import { destroyEditor, getEditorData, getFormattedToday, initializeEditor } from './DiaryEditor.ts';
 import './DiaryEditorPage.css';
-import {CategoryTags, initialCategoryTags} from "./TagData.ts";
-import { handleTagClick, handleRemoveTag,} from './TagHandler.ts';
+import { CategoryTags, initialCategoryTags } from "./TagData.ts";
+import { handleTagClick, handleRemoveTag } from './TagHandler.ts';
 
 export const DiaryEditorPage: React.FC = () => {
     const editorContainerRef = useRef<HTMLDivElement | null>(null);
-    const [showModal, setShowModal] = useState(false); // 모달 상태
+    const [showModal, setShowModal] = useState(false);
+    const navigate = useNavigate();
 
-    const [categoryTags, setCategoryTags] = useState<CategoryTags>(initialCategoryTags); // 카테고리 리스트
-    const [selectedCategory, setSelectedCategory] = useState<string>(''); // 선택된 카테고리
-    const [showAddCategoryButton, setShowAddCategoryButton] = useState<boolean>(false); // 카테고리 생성 버튼 상태
-    const [selectedTags, setSelectedTags] = useState<{ id: number; emoji: string; label: string }[]>([]); // 선택된 태그 / 혹시 오류나면 id: number; 지우기
-    const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]); // 태그 id만 저장
+    const [categoryTags, setCategoryTags] = useState<CategoryTags>(initialCategoryTags);
+    const [selectedCategory, setSelectedCategory] = useState<string>('');
+    const [showAddCategoryButton, setShowAddCategoryButton] = useState<boolean>(false);
+    const [selectedTags, setSelectedTags] = useState<{ id: number; emoji: string; label: string }[]>([]);
+    const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
 
-    const [isAddingTag, setIsAddingTag] = useState(false); // + 버튼 클릭 여부
-    const [newTagName, setNewTagName] = useState(""); // 입력 중인 태그 이름
+    const [isAddingTag, setIsAddingTag] = useState(false);
+    const [newTagName, setNewTagName] = useState("");
 
-    const formattedDate = getFormattedToday(); // 오늘 날짜 포맷팅
+    const formattedDate = getFormattedToday();
 
-    const { questionText } = useParams<{ questionText: string }>(); // URL에서 받아온 질문 제목을 useState로 초기화
+    const { questionText } = useParams<{ questionText: string }>();
     const [isEditingTitle, setIsEditingTitle] = useState(false);
-    const [title, setTitle] = useState(questionText || "📬 오늘 가장 인상 깊었던 순간은?");  // 초기값을 URL에서 받은 타이틀로 설정
+    const [title, setTitle] = useState(questionText || "제목을 입력해주세요!");
 
-    const accessToken = localStorage.getItem("accessToken"); // 저장된 토큰 가져오기
 
     useEffect(() => {
-        if (questionText) {
-            setTitle(decodeURIComponent(questionText) + '?'); // URL 파라미터로 전달된 타이틀을 상태에 반영
-        }
+        const checkAuthAndFetchData = async () => {
+            try {
+                // 1. 사용자 인증 상태 확인
+                const userRes = await fetch('http://localhost:8080/auth/me', {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                });
 
-        if (editorContainerRef.current) { // 에디터 초기화
-            initializeEditor(editorContainerRef.current);
-        }
-
-        // 기타 태그 불러오기
-        fetch('http://localhost:8080/category/6' , {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            },
-            credentials: "include"
-        })
-            .then(async response => {
-                if (response.status === 204) {
-                    return []; // 내용 없을 때 빈 배열
-                } else if (!response.ok) {
-                    throw new Error('서버 오류');
+                if (!userRes.ok) {
+                    // 서버 응답이 성공(2xx)이 아니거나, 특히 401 Unauthorized인 경우
+                    console.warn('인증되지 않은 접근 또는 세션 만료:', userRes.status);
+                    alert('로그인이 필요하거나 세션이 만료되었습니다. 다시 로그인해주세요.');
+                    navigate('/');
+                    return;
                 }
-                return await response.json();
-            })
-            .then(data => {
-                console.log('서버에서 가져온 태그 데이터:', data);
 
-                const newTag = data.map((tag: any) => ({
-                    id: tag.tagId,
-                    emoji: '🏷️', // 임시
-                    label: tag.name
-                }));
+                // 2. URL 파라미터로 받은 질문 타이틀 설정
+                if (questionText) {
+                    setTitle(decodeURIComponent(questionText) + '?');
+                }
 
-                setCategoryTags(prev => ({
-                    ...prev,
-                    '기타': newTag
-                }));
+                // 3. 에디터 초기화
+                if (editorContainerRef.current) {
+                    initializeEditor(editorContainerRef.current);
+                }
 
-                setNewTagName(''); // 태그 입력 초기화
-                setIsAddingTag(false);
-            })
-            .catch(error => {
-                console.error('기타 태그 불러오기 실패:', error);
-            });
+                // 4. 기타 태그 불러오기
+                const accessToken = localStorage.getItem("accessToken");
+                fetch('http://localhost:8080/category/6' , {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`
+                    },
+                    credentials: "include"
+                })
+                    .then(async response => {
+                        if (response.status === 204) {
+                            return []; // 내용 없을 때 빈 배열 반환
+                        } else if (!response.ok) {
+                            throw new Error(`기타 태그 불러오기 실패: ${response.status}`);
+                        }
+                        return await response.json();
+                    })
+                    .then(data => {
+                        console.log('서버에서 가져온 기타 태그 데이터:', data);
+
+                        const newTag = data.map((tag: any) => ({
+                            id: tag.tagId,
+                            emoji: '🏷️',
+                            label: tag.name
+                        }));
+
+                        setCategoryTags(prev => ({
+                            ...prev,
+                            '기타': newTag
+                        }));
+
+                        setNewTagName('');
+                        setIsAddingTag(false);
+                    })
+                    .catch(error => {
+                        console.error('기타 태그 불러오기 중 오류 발생:', error);
+                    });
+
+            } catch (error) {
+                console.error('페이지 초기 로딩 중 치명적인 오류 발생:', error);
+                alert('페이지 로딩 중 오류가 발생했습니다. 다시 시도해주세요.');
+                navigate('/');
+            }
+        };
+
+        checkAuthAndFetchData();
 
         return () => {
             destroyEditor();
         };
-    }, [questionText]);
+    }, [questionText, navigate]);
 
-    // 일기 저장-> 콘솔 출력
+    // 일기 저장
     const handleSave = async () => {
         const content = await getEditorData();
-
+        const accessToken = localStorage.getItem("accessToken");
         const diaryData = {
             title: title,
             content: content,
@@ -93,21 +122,27 @@ export const DiaryEditorPage: React.FC = () => {
             tags: tagList
         };
 
-        console.log("보내는 데이터:", JSON.stringify(requestData)); // 데이터 확인용
+        console.log("보내는 데이터:", JSON.stringify(requestData));
 
         try {
             const response = await fetch('http://localhost:8080/diary/save', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${accessToken}`
+                    "Authorization": `Bearer ${accessToken}` // Bearer 토큰 방식도 함께 사용한다면
                 },
-                credentials: "include",
+                credentials: "include", // HTTPOnly 쿠키도 함께 전송
                 body: JSON.stringify(requestData),
             });
 
             if (!response.ok) {
-                throw new Error("서버 응답 실패");
+                // 저장 API 호출 중 인증 문제 발생 시
+                if (response.status === 401) {
+                    alert('세션이 만료되어 저장이 불가능합니다. 다시 로그인해주세요.');
+                    navigate('/'); // 로그인 페이지로 리다이렉트
+                    return;
+                }
+                throw new Error(`서버 응답 실패: ${response.status}`);
             }
 
             console.log("서버에 저장 완료:", await response.json());
@@ -121,22 +156,17 @@ export const DiaryEditorPage: React.FC = () => {
     // 모달 닫기
     const closeModal = () => {
         setShowModal(false);
+        navigate('/list'); // 저장 완료 후 목록 페이지로 리다이렉션
     };
 
     // 카테고리 전환 처리
     const handleCategoryClick = (category: string) => {
-        // '기타' 카테고리 클릭 시 추가 버튼을 보여주고, 그 외 카테고리 클릭 시 숨기기
-        if (category === '기타') {
-            setShowAddCategoryButton(true);  // '기타' 카테고리 선택 시 추가 버튼 보이기
-        } else {
-            setShowAddCategoryButton(false);  // '기타' 외 다른 카테고리 선택 시 추가 버튼 숨기기
-        }
-
-        // 선택된 카테고리 상태 변경
         if (selectedCategory === category) {
-            setSelectedCategory('');  // 이미 선택된 카테고리라면 선택 해제
+            setSelectedCategory('');
+            setShowAddCategoryButton(false);
         } else {
-            setSelectedCategory(category);  // 새 카테고리 선택
+            setSelectedCategory(category);
+            setShowAddCategoryButton(category === '기타');
         }
     };
 
@@ -150,11 +180,11 @@ export const DiaryEditorPage: React.FC = () => {
         if (e.key === 'Enter' && newTagName.trim() !== '') {
             const newTag = {
                 name: newTagName.trim(),
-                categoryId: 6,  // 기타 카테고리 ID
+                categoryId: 6, // 기타 카테고리 ID
             };
             console.log("태그 생성:", newTag);
+            const accessToken = localStorage.getItem("accessToken"); // 태그 생성 시점에 토큰 다시 가져오기
 
-            // 태그 생성 후 DB에 추가
             fetch('http://localhost:8080/tag/create', {
                 method: 'POST',
                 headers: {
@@ -162,34 +192,43 @@ export const DiaryEditorPage: React.FC = () => {
                     'Authorization': `Bearer ${accessToken}`
                 },
                 credentials: "include",
-                body: JSON.stringify(newTag), // newTag를 JSON 형식으로 변환하여 body에 추가
+                body: JSON.stringify(newTag),
             })
-                .then(response => response.json()) // 응답을 JSON으로 처리
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 401) {
+                            alert('세션이 만료되어 태그 생성이 불가능합니다. 다시 로그인해주세요.');
+                            navigate('/');
+                            throw new Error('Unauthorized');
+                        }
+                        throw new Error(`태그 생성 서버 응답 실패: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     console.log("태그가 성공적으로 추가되었습니다:", data);
-
                     const createdTag = {
-                        id: data.id,  // 서버에서 반환된 ID
-                        emoji: '🏷️',  // 임시
+                        id: data.id,
+                        emoji: '🏷️',
                         label: data.name
                     };
-
-                    // '기타' 카테고리에 새 태그 추가
                     setCategoryTags(prev => ({
                         ...prev,
                         '기타': [
-                            ...prev['기타'],  // 기존 '기타' 태그들
-                            createdTag       // 새 태그 추가
+                            ...prev['기타'],
+                            createdTag
                         ]
                     }));
-
-                    setNewTagName(''); // 태그 입력 초기화
+                    setNewTagName('');
                     setIsAddingTag(false);
                 })
                 .catch(error => {
                     console.error("태그 생성 중 오류 발생:", error);
+                    if (error.message !== 'Unauthorized') { // 이미 처리된 401 오류는 제외
+                        alert('태그 생성에 실패했습니다.');
+                    }
                 });
-        } else if (e.key === 'Escape') { // ESC 키 누르면 입력 취소
+        } else if (e.key === 'Escape') {
             setNewTagName('');
             setIsAddingTag(false);
         }
@@ -228,8 +267,7 @@ export const DiaryEditorPage: React.FC = () => {
                         {title}
                     </h1>
                 )}
-                {/*<h1 className="title">📬 오늘 가장 인상 깊었던 순간은?</h1> /!* 오늘의 질문 *!/*/}
-                <p className="date">{formattedDate}</p> {/* 자동 날짜 표시 */}
+                <p className="date">{formattedDate}</p>
                 <div
                     className="editor-container"
                     ref={editorContainerRef}
@@ -263,7 +301,7 @@ export const DiaryEditorPage: React.FC = () => {
                                     key={tag.id}
                                     className="category-tag"
                                     onClick={() => handleTagClick(tag, selectedTags, selectedTagIds, setSelectedTags, setSelectedTagIds)}
-                                    data-id={tag.id} // HTML에 id 포함
+                                    data-id={tag.id}
                                 >
                                     {tag.emoji} {tag.label}
                                 </span>
@@ -271,7 +309,6 @@ export const DiaryEditorPage: React.FC = () => {
                         </div>
                     )}
 
-                    {/* '기타' 카테고리가 선택되면 카테고리 생성 버튼 표시 */}
                     {showAddCategoryButton && (
                         <div className="tag-add">
                             {isAddingTag ? (
@@ -309,6 +346,6 @@ export const DiaryEditorPage: React.FC = () => {
             )}
         </div>
     );
-}
+};
 
 export default DiaryEditorPage;
