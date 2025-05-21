@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Header from '../../header/Header';  // Header 컴포넌트 경로
+import Header from '../../header/Header';
 import './ListPage.css';
 import { useNavigate } from 'react-router-dom';
 
@@ -22,7 +22,6 @@ const ListPage: React.FC = () => {
   const [currentYear, setCurrentYear] = useState<number>(0);
   const [currentMonth, setCurrentMonth] = useState<number>(0);
 
-  // 쿠키에서 accessToken 꺼내는 함수
   const getAccessTokenFromCookies = (): string => {
     const name = 'accessToken=';
     const decoded = decodeURIComponent(document.cookie);
@@ -66,7 +65,8 @@ const ListPage: React.FC = () => {
 
   useEffect(() => {
     async function fetchData() {
-      const token = getAccessTokenFromCookies();
+      const token = localStorage.getItem('accessToken');
+
       try {
         setLoading(true);
         // 1) 사용자 정보 호출
@@ -74,11 +74,17 @@ const ListPage: React.FC = () => {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`,
           },
           credentials: 'include',
         });
-        if (!userRes.ok) throw new Error('User fetch failed');
+
+        if (!userRes.ok) {
+          // 인증 실패(401) 또는 기타 오류 발생 시 로그인 페이지로 리다이렉트
+          console.error('사용자 정보 호출 실패:', userRes.status, userRes.statusText);
+          alert('로그인이 필요하거나 세션이 만료되었습니다. 다시 로그인해주세요.');
+          navigate('/');
+          return;
+        }
         const userData: UserInfo = await userRes.json();
         setUser(userData);
 
@@ -89,25 +95,37 @@ const ListPage: React.FC = () => {
             method: 'GET',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`,
             },
             credentials: 'include',
           }
         );
-        if (!diaryRes.ok) throw new Error('Diary list fetch failed');
+
+        if (!diaryRes.ok) {
+          // 일기 목록 호출 실패 시 로그인 페이지로 리다이렉트 (인증 문제로 가정)
+          console.error('일기 목록 호출 실패:', diaryRes.status, diaryRes.statusText);
+          alert('일기 목록을 불러오는 데 실패했습니다. 다시 로그인해주세요.');
+          navigate('/');
+          return;
+        }
         const diaryData: DiaryItem[] = await diaryRes.json();
 
         console.log('Received Diary Data:', diaryData);
         setDiaries(diaryData);
       } catch (error) {
-        console.error('API 호출 오류:', error);
+        // 네트워크 오류 등 예상치 못한 오류 발생 시
+        console.error('API 호출 중 오류 발생:', error);
+        alert('페이지 로딩 중 오류가 발생했습니다. 다시 시도해주세요.');
+        navigate('/');
       } finally {
         setLoading(false);
       }
     }
 
-    fetchData();
-  }, [currentYear, currentMonth]);  // currentYear와 currentMonth가 변경될 때마다 fetchData 실행
+    // currentYear와 currentMonth가 유효한 값일 때만 fetchData 호출
+    if (currentYear !== 0 && currentMonth !== 0) {
+        fetchData();
+    }
+  }, [currentYear, currentMonth, navigate]);
 
   if (loading) {
     return <div className="loading">로딩 중...</div>;
@@ -115,7 +133,7 @@ const ListPage: React.FC = () => {
 
   return (
     <div className="webpage-layout">
-      <Header /> {/* 공통 헤더 사용 */}
+      <Header />
 
       <main className="webpage-container">
         <div className="header-container">
@@ -133,9 +151,7 @@ const ListPage: React.FC = () => {
         </div>
 
         <section id="diary-list" className="diary-list">
-          {loading ? (
-            <div className="loading">로딩 중...</div>
-          ) : diaries.length === 0 ? (
+          {diaries.length === 0 ? (
             <p className="empty">작성된 일기가 없습니다.</p>
           ) : (
             diaries.map(diary => {
