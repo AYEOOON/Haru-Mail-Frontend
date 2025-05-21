@@ -23,28 +23,6 @@ export const initializeViewer = (holder: HTMLElement, savedJson: any) => {
             list: List,
             image: {
                 class: Image,
-                config: {
-                    uploader: {
-                        uploadByFile(file: File) {
-                            // 클라이언트 측에서만 처리
-                            return new Promise((resolve) => {
-                                const reader = new FileReader();
-
-                                reader.onload = () => {
-                                    resolve({
-                                        success: 1,
-                                        file: {
-                                            url: reader.result,  // Data URL로 파일을 반환
-                                        },
-                                    });
-                                };
-
-                                // 파일을 읽고 Data URL 형식으로 저장
-                                reader.readAsDataURL(file);
-                            });
-                        }
-                    }
-                }
             },
         },
         autofocus: true,
