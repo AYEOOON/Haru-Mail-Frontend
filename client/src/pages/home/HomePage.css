@@ -29,10 +29,18 @@
   box-sizing: border-box;
 }
 
+
 .homepage-logo {
-  font-size: 1.8rem;
+  font-size: 20px;
   font-weight: bold;
-  margin: 0;
+  color: #333;
+  cursor: pointer;
+  user-select: none;
+}
+
+.homepage-logo:hover {
+  opacity: 0.8;
+  transition: 0.2s;
   color: #333;
 }
 
@@ -145,12 +153,11 @@
 }
 
 .modal-content {
+  width: 420px;
   background-color: white;
-  padding: 2rem;
-  border-radius: 0.75rem;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
 }
 
 .modal-content h2 {
@@ -160,20 +167,36 @@
 }
 
 .google-login {
-  background-color: #4285F4;
+  background-color: #eb1c24;
   color: white;
   padding: 0.75rem;
   border: none;
   border-radius: 9999px;
   width: 100%;
   font-weight: bold;
-  margin-bottom: 1rem;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: transform 0.2s, box-shadow 0.3s ease;
 }
 
 .google-login:hover {
-  background-color: #3367d6;
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.google-login:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  color: #666;
+  border: none;
+  opacity: 0.6;
+}
+
+.warning-text {
+  color: red;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
 }
 
 .close-button {
@@ -183,6 +206,49 @@
   text-decoration: underline;
   cursor: pointer;
   padding: 0.5rem;
+}
+
+.frequency-options {
+  display: flex;
+  flex-direction: row; /* 수평 정렬 */
+  gap: 12px; /* 항목 사이 여백 */
+  justify-content: center;
+  margin: 16px 0;
+  flex-wrap: wrap; /* 화면 작아질 때 줄바꿈 */
+}
+
+.frequency-option {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 20px;
+}
+
+.frequency-option input[type="radio"] {
+  display: none;
+}
+
+.custom-checkbox {
+  background-color: #f8f8f8;
+  border: 2px solid #ccc;
+  border-radius: 16px;
+  padding: 8px 14px;
+  font-size: 16px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.custom-checkbox:hover {
+  background-color: #fff7e6;
+}
+
+.frequency-option input[type="radio"]:checked + .custom-checkbox {
+  background-color: #ffefd5;
+  border-color: #ffcc70;
+  box-shadow: 0 0 5px rgba(255, 200, 100, 0.6);
+  font-weight: bold;
 }
 
 /* 반응형 스타일 */
