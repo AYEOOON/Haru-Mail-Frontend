@@ -64,9 +64,9 @@ const DiaryDetailPage: React.FC = () => {
             <div className="container">
                 <h1 className="title">{diaryData?.title || 'Loading...'}</h1>
                 <p className="date">{diaryData?.date ? formatDate(diaryData.date) : 'Loading...'}</p>
-                <div className="editorWrapper">
+                <div className="viwerWrapper">
                     <div
-                        className="viewer-container"
+                        className="viewerContainer"
                         ref={viewerContainerRef}
                     ></div>
                 </div>
