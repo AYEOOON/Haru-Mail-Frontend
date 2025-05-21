@@ -3,6 +3,8 @@ import './HomePage.css';
 
 const WebPage: React.FC = () => {
   const [showModal, setShowModal] = useState(false);
+  const [selectedFrequency, setSelectedFrequency] = useState("daily");
+  const [isAgreed, setIsAgreed] = useState(false);
 
   const handleSubscribeClick = () => {
     setShowModal(true);
@@ -62,9 +64,59 @@ const WebPage: React.FC = () => {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>구독을 위한 로그인</h2>
-            <button className="google-login" onClick={handleGoogleLogin}>
-              Google로 로그인하기
+            <h2>하루 일기 구독</h2>
+            <p>메일 수신 빈도를 선택해주세요!</p>
+            <div className="frequency-options">
+              <label className="frequency-option">
+                <input
+                  type="radio"
+                  name="frequency"
+                  value="daily"
+                  checked={selectedFrequency === 'daily'}
+                  onChange={() => setSelectedFrequency('daily')}
+                />
+                <span className="custom-checkbox">🐥 매일</span>
+              </label>
+              <label className="frequency-option">
+                <input
+                  type="radio"
+                  name="frequency"
+                  value="every_other_day"
+                  checked={selectedFrequency === 'every_other_day'}
+                  onChange={() => setSelectedFrequency('every_other_day')}
+                />
+                <span className="custom-checkbox">🐢 격일</span>
+              </label>
+              <label className="frequency-option">
+                <input
+                  type="radio"
+                  name="frequency"
+                  value="weekly"
+                  checked={selectedFrequency === 'weekly'}
+                  onChange={() => setSelectedFrequency('weekly')}
+                />
+                <span className="custom-checkbox">🐻 주 1회</span>
+              </label>
+            </div>
+            <label className="agree-checkbox">
+              <input
+                type="checkbox"
+                checked={isAgreed}
+                onChange={(e) => setIsAgreed(e.target.checked)}
+              />
+              <span> 메일 수신에 동의합니다.</span>
+            </label>
+
+            {!isAgreed && (
+              <p className="warning-text">메일 수신에 동의해야 시작할 수 있어요.</p>
+            )}
+
+            <button
+              className={`google-login ${!isAgreed ? 'disabled' : ''}`}
+              onClick={handleGoogleLogin}
+              disabled={!isAgreed}
+            >
+              Google Mail로 시작하기!
             </button>
             <button className="close-button" onClick={handleCloseModal}>
               닫기
