@@ -7,6 +7,7 @@ import SettingPage from './pages/setting/MailSettingPage';
 import EditorPage from './pages/diary/diaryEditor/DiaryEditorPage';
 import DiaryDetailPage from './pages/diary/diaryDetail/DiaryDetailPage';
 import OAuthCallback from './pages/oauth/OAuthCallback';
+import SearchPage from './pages/diary/search/SearchPage';
 
 function App() {
   return (
@@ -19,6 +20,8 @@ function App() {
         <Route path="/editor/:questionText" element={<EditorPage />} />
         <Route path="/detail" element={<DiaryDetailPage />} />
         <Route path="/oauth/callback" element={<OAuthCallback />} />
+        <Route path="/diary/:diaryId" element={<DiaryDetailPage />} />
+        <Route path="/search" element={<SearchPage />} />
       </Routes>
     </Router>
   );
