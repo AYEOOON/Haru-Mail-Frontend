@@ -1,18 +1,25 @@
-/* 헤더 */
 .header {
     display: flex;
+    height: 60px;
     justify-content: space-between;
     align-items: center;
     background-color: #eb1c24;
     padding: 15px 30px;
     color: white;
     width: 100%;
+    position: relative;
+    z-index: 100;
 }
 
 .logo {
     font-size: 20px;
     font-weight: bold;
     color: white !important;
+}
+
+.nav {
+    display: flex;
+    align-items: center;
 }
 
 .nav a,
@@ -26,4 +33,61 @@
     cursor: pointer;
     padding: 0;
     font-family: inherit;
+}
+
+/* 햄버거 버튼 스타일 */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    cursor: pointer;
+    z-index: 110;
+}
+
+/* 세 줄 메뉴 바 스타일 */
+.hamburger .bar {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 4px 0;
+}
+
+/* X 아이콘 스타일 */
+.close-icon {
+    font-size: 28px;
+    color: white;
+    line-height: 1;
+}
+
+/* 모바일용 스타일 */
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+
+    .nav {
+        position: absolute;
+        top: 60px;
+        right: 0;
+        width: 100%;
+        background-color: #eb1c24;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s ease-in-out;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav.open {
+        max-height: 300px;
+        /*transform: translateY(0);*/
+        /*opacity: 1;*/
+        /*pointer-events: auto;*/
+    }
+
+    .nav a,
+    .nav button {
+        margin: 15px 20px;
+        font-size: 16px;
+    }
 }
