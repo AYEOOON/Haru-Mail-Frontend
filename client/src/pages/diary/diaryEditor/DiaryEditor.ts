@@ -6,6 +6,8 @@ import Image from '@editorjs/image';
 export let editor: EditorJS | null = null; // 에디터 인스턴스 (전역 참조용)
 let isInitializing = false; // 중복 초기화를 방지하기 위한 플래그
 
+const accessToken = localStorage.getItem("accessToken"); // 저장된 토큰 가져오기
+
 // 에디터 초기화
 export const initializeEditor = (holder: HTMLElement) => {
     if (editor || isInitializing) return; // 이미 초기화 중이거나 완료된 경우 종료
@@ -22,23 +24,32 @@ export const initializeEditor = (holder: HTMLElement) => {
                 class: Image,
                 config: {
                     uploader: {
-                        uploadByFile(file: File) {
-                            // 클라이언트 측에서만 처리
-                            return new Promise((resolve) => {
-                                const reader = new FileReader();
+                        async uploadByFile(file: File) {
+                            const formData = new FormData();
+                            formData.append("file", file);
 
-                                reader.onload = () => {
-                                    resolve({
-                                        success: 1,
-                                        file: {
-                                            url: reader.result,  // Data URL로 파일을 반환
-                                        },
-                                    });
-                                };
-
-                                // 파일을 읽고 Data URL 형식으로 저장
-                                reader.readAsDataURL(file);
+                            const res = await fetch("http://localhost:8080/image/upload-image", {
+                                method: "POST",
+                                headers: {
+                                    "Authorization": `Bearer ${accessToken}`
+                                },
+                                credentials: "include",
+                                body: formData,
                             });
+
+                            const result = await res.json();
+
+                            if (result.success) {
+                                return {
+                                    success: 1,
+                                    file: {
+                                        url: result.url,
+                                    },
+                                };
+                            } else {
+                                console.error("Upload failed:", result.error);
+                                return { success: 0 };
+                            }
                         }
                     }
                 }
@@ -89,48 +100,3 @@ export const getEditorData = async () => {
         }
     }
 };
-
-// let imageCache = []; // 이미지를 임시로 저장할 배열
-//
-// const imageUploader = {
-//     async uploadByFile(file) {
-//         // 여기서 file을 처리하고, 서버에 업로드 후 URL을 반환
-//         console.log(file);  // 파일을 콘솔에 찍어 확인
-//         return {
-//             success: 1,
-//             file: {
-//                 url: 'https://via.placeholder.com/150',  // 테스트용 이미지 URL
-//             },
-//         };
-//     },
-// };
-//
-// // 이미지 업로드를 위한 서버 API 호출
-// const imageUploader2 = {
-//     async uploadByFile(file: File) {
-//         const formData = new FormData();
-//         formData.append('file', file);
-//
-//         try {
-//             // 실제 이미지 업로드 API 호출 코드
-//             const response = await fetch('/upload-image-endpoint', {
-//                 method: 'POST',
-//                 body: formData,
-//             });
-//
-//             const result = await response.json();
-//             if (result.success) {
-//                 return {
-//                     success: 1,
-//                     file: {
-//                         url: result.url, // 서버에서 반환된 이미지 URL
-//                     },
-//                 };
-//             }
-//             return { success: 0 }; // 업로드 실패 시 처리
-//         } catch (error) {
-//             console.error("Image upload failed", error);
-//             return { success: 0 };
-//         }
-//     },
-// };
