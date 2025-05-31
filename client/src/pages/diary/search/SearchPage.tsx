@@ -18,7 +18,7 @@ const SearchPage: React.FC = () => {
 
     useEffect(() => {
         // 기타 태그 불러오기
-        fetch('http://localhost:8080/category/6' , {
+        fetch('http://localhost:8080/api/category/6' , {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
             },
@@ -59,7 +59,7 @@ const SearchPage: React.FC = () => {
 
         const queryParams = selectedTagIds.map(id => `tags=${id}`).join('&');
 
-        fetch(`http://localhost:8080/tag/search?${queryParams}`, {
+        fetch(`http://localhost:8080/api/tag/search?${queryParams}`, {
             method: 'GET',
             headers: {
                 'Authorization': `Bearer ${accessToken}`

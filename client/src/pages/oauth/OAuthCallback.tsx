@@ -19,7 +19,7 @@ const OAuthCallback: React.FC = () => {
         setError(null);
 
         // 1) 사용자 정보 호출 (쿠키는 fetch의 credentials: 'include' 옵션으로 자동 전송)
-        const userRes = await fetch('http://localhost:8080/auth/me', {
+        const userRes = await fetch('http://localhost:8080/api/auth/me', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
