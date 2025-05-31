@@ -9,7 +9,7 @@ let isInitializing = false; // 중복 초기화를 방지하기 위한 플래그
 const accessToken = localStorage.getItem("accessToken"); // 저장된 토큰 가져오기
 
 // 에디터 초기화
-export const initializeEditor = (holder: HTMLElement) => {
+export const initializeEditor = (holder: HTMLElement, onChange: () => void) => {
     if (editor || isInitializing) return; // 이미 초기화 중이거나 완료된 경우 종료
 
     console.log("initializing...");
@@ -28,7 +28,7 @@ export const initializeEditor = (holder: HTMLElement) => {
                             const formData = new FormData();
                             formData.append("file", file);
 
-                            const res = await fetch("http://localhost:8080/image/upload-image", {
+                            const res = await fetch("http://localhost:8080/api/image/upload-image", {
                                 method: "POST",
                                 headers: {
                                     "Authorization": `Bearer ${accessToken}`
@@ -56,6 +56,13 @@ export const initializeEditor = (holder: HTMLElement) => {
             },
         },
         autofocus: true,
+        onChange: () => {
+            instance.save().then(() => {
+                onChange();
+            }).catch((error) => {
+                console.error("Error saving editor content on change:", error);
+            });
+        }
     });
 
     // 에디터가 준비되면 전역 editor에 저장
