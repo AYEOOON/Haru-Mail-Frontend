@@ -1,12 +1,10 @@
-/* 전체 레이아웃 */
+/* HomePage.css */
+
+/* 웹페이지 레이아웃 전체 */
 .webpage-layout {
-  font-family: 'Pretendard', sans-serif;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  margin: 0;
-  padding: 0;
-  width: 100%;
+  min-height: 100vh;
 }
 
 /* 헤더 스타일 */
@@ -29,13 +27,13 @@
   box-sizing: border-box;
 }
 
-
 .homepage-logo {
-  font-size: 20px;
+  font-size: 1.5rem; /* rem 단위로 변경 (데스크톱 기본) */
   font-weight: bold;
   color: #333;
   cursor: pointer;
   user-select: none;
+  text-decoration: none; /* 링크 밑줄 제거 */
 }
 
 .homepage-logo:hover {
@@ -54,7 +52,8 @@
   padding: 0.5rem 0;
 }
 
-/* 컨테이너 스타일 */
+
+/* 컨테이너 스타일 - 메인 콘텐츠와 스크롤 섹션 간 간격 조절 */
 .webpage-container {
   flex: 1;
   width: 100%;
@@ -62,6 +61,8 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  /* 메인 콘텐츠 아래 여백 추가 */
+  margin-bottom: 120px; /* 메인 섹션과 첫 스크롤 섹션 사이 간격 */
 }
 
 /* 메인 콘텐츠 */
@@ -83,14 +84,14 @@
 }
 
 .main-title {
-  font-size: 3vw;
+  font-size: 3vw; /* 기본값 (클램프 함수로 제어될 것) */
   font-weight: bold;
   margin-bottom: 1.5rem;
   line-height: 1.3;
 }
 
 .main-subtitle {
-  font-size: 1.4vw;
+  font-size: 1.4vw; /* 기본값 (클램프 함수로 제어될 것) */
   margin-bottom: 2.5rem;
   color: #333;
 }
@@ -107,12 +108,12 @@
   align-items: center;
   gap: 0.5rem;
   cursor: pointer;
-  transition: background-color 0.3s, transform 0.3s; /* transform 효과 추가 */
+  transition: background-color 0.3s, transform 0.3s;
 }
 
 .subscribe-button:hover {
   background-color: #d32f2f;
-  transform: scale(1.1); /* 호버 시 버튼 크기 확대 */
+  transform: scale(1.1);
 }
 
 .image-section {
@@ -251,104 +252,381 @@
   font-weight: bold;
 }
 
-/* 반응형 스타일 */
+/* 새로운 스크롤 섹션 스타일 */
+.scroll-section {
+  width: 100%;
+  padding: 8% 7%;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.scroll-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-section-title {
+  font-size: 2.5vw; /* 기본값 (클램프 함수로 제어될 것) */
+  font-weight: bold;
+  margin-bottom: 2rem;
+  color: #333;
+}
+
+.scroll-section-subtitle {
+  font-size: 1.3vw; /* 기본값 (클램프 함수로 제어될 것) */
+  color: #555;
+  line-height: 1.6;
+  max-width: 800px;
+  margin-bottom: 3rem;
+}
+
+.scroll-section-content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.content-item {
+  flex: 1;
+  min-width: 280px;
+  max-width: 350px;
+  background-color: #f8f8f8;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.content-item.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.content-item:hover {
+  transform: translateY(-10px);
+}
+
+.content-item-icon {
+  width: 100px; /* 기본값 */
+  height: 100px; /* 기본값 */
+  margin-bottom: 20px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.content-item-icon img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.content-item-title {
+  font-size: 1.5rem; /* rem 단위로 고정값 유지 (클램프 함수로 조절 가능) */
+  font-weight: bold;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.content-item-description {
+  font-size: 1rem; /* rem 단위로 고정값 유지 (클램프 함수로 조절 가능) */
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 이미지 섹션용 (Q&A 보드) */
+.qna-board-image {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  margin-top: 30px;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ================================================================= */
+/* 반응형 스타일 조정 - 새로운 미디어 쿼리 구간과 clamp() 적용 */
+/* ================================================================= */
+
+/* 1921px 이상 (가장 큰 화면) */
 @media (min-width: 1921px) {
   .header-content {
     padding: 0 10%;
   }
-
   .webpage-container {
     padding: 3% 10%;
+    margin-bottom: 150px;
   }
-
   .main-title {
-    font-size: 2.8rem;
+    font-size: 3.2rem; /* 고정값으로 설정하여 너무 커지지 않게 */
   }
-
   .main-subtitle {
-    font-size: 1.5rem;
+    font-size: 1.6rem; /* 고정값으로 설정 */
   }
-
   .subscribe-button {
     font-size: 1.2rem;
   }
+  .scroll-section-title {
+    font-size: 2.6rem; /* 고정값으로 설정 */
+  }
+  .scroll-section-subtitle {
+    font-size: 1.3rem; /* 고정값으로 설정 */
+  }
+
+  .content-item-icon { /* 큰 화면에서 아이콘 크기 유지 */
+    width: 100px;
+    height: 100px;
+  }
 }
 
-@media (max-width: 1400px) {
+/* 1401px ~ 1920px (큰 데스크톱 ~ 중간 데스크톱) */
+@media (max-width: 1920px) {
   .main-title {
-    font-size: 2rem;
+    font-size: clamp(2.4rem, 3vw, 3rem); /* 최소 2.4rem, 뷰포트 3vw, 최대 3rem */
   }
-
   .main-subtitle {
-    font-size: 1.2rem;
+    font-size: clamp(1.2rem, 1.4vw, 1.5rem); /* 최소 1.2rem, 뷰포트 1.4vw, 최대 1.5rem */
   }
+  .scroll-section-title {
+    font-size: clamp(2rem, 2.5vw, 2.5rem); /* 최소 2rem, 뷰포트 2.5vw, 최대 2.5rem */
+  }
+  .scroll-section-subtitle {
+    font-size: clamp(1.1rem, 1.3vw, 1.3rem); /* 최소 1.1rem, 뷰포트 1.3vw, 최대 1.3rem */
+  }
+  .content-item-icon { /* 이 구간에서 아이콘 크기 살짝 줄임 */
+    width: 90px;
+    height: 90px;
+  }
+}
 
+/* 1025px ~ 1400px (태블릿 가로 / 작은 노트북 - 주신 이미지 크기 구간) */
+@media (max-width: 1400px) {
+  .header-content {
+    padding: 0 6%;
+  }
+  .webpage-container {
+    padding: 6% 6%;
+    margin-bottom: 100px;
+  }
+  .main-title {
+    font-size: clamp(2.2rem, 3.8vw, 2.8rem); /* 글자 크기 더 키움 */
+    margin-bottom: 1rem;
+  }
+  .main-subtitle {
+    font-size: clamp(1.1rem, 1.8vw, 1.5rem); /* 글자 크기 더 키움 */
+    margin-bottom: 2rem;
+  }
   .subscribe-button {
     font-size: 1rem;
+    padding: 0.7rem 1.4rem;
+  }
+  .scroll-section-title {
+    font-size: clamp(1.8rem, 3vw, 2.4rem); /* 스크롤 섹션 제목도 조정 */
+    margin-bottom: 1.5rem;
+  }
+  .scroll-section-subtitle {
+    font-size: clamp(1rem, 1.6vw, 1.2rem); /* 스크롤 섹션 부제목도 조정 */
+    margin-bottom: 2rem;
+  }
+  .content-item-icon { /* 이 구간에서 아이콘 크기 또 줄임 */
+    width: 80px;
+    height: 80px;
+  }
+  .content-item-title { /* 카드 제목 유지 (필요시 조정) */
+    font-size: 1.4rem;
+  }
+  .content-item-description { /* 카드 내용 유지 (필요시 조정) */
+    font-size: 0.95rem;
   }
 }
 
-@media (max-width: 768px) {
+/* 769px ~ 1024px (태블릿 세로) */
+@media (max-width: 1024px) {
   .header-content {
     padding: 0 5%;
   }
-
   .webpage-container {
-    padding: 5%;
+    padding: 8% 5%;
+    margin-bottom: 80px;
   }
-
   .webpage-main {
-    flex-direction: column-reverse;
+    flex-direction: column-reverse; /* 모바일 레이아웃 전환 */
     margin-top: 5%;
-    gap: 2rem;
+    gap: 3rem;
+    align-items: center;
+    justify-content: center;
   }
-
   .text-section {
     max-width: 100%;
     padding-right: 0;
     text-align: center;
+    width: 100%;
   }
-
   .main-title {
-    font-size: 7vw;
+    font-size: clamp(2rem, 6vw, 2.8rem); /* 태블릿 세로에서 제목 크기 */
+    margin-bottom: 1rem;
   }
-
   .main-subtitle {
-    font-size: 4vw;
-    margin-bottom: 2rem;
+    font-size: clamp(1rem, 3.5vw, 1.4rem); /* 태블릿 세로에서 부제목 크기 */
+    margin-bottom: 2.5rem;
   }
-
   .subscribe-button {
-    font-size: 3vw;
-    margin: 0 auto;
+    font-size: 1.1rem;
+    padding: 0.8rem 2rem;
   }
-
   .image-section {
     justify-content: center;
     width: 100%;
     margin-bottom: 1rem;
   }
-
   .main-image {
-    max-width: 80%;
+    max-width: 70%; /* 이미지 크기 약간 줄임 */
+  }
+  .scroll-section {
+    padding: 10% 5%;
+    margin-bottom: 50px;
+  }
+  .scroll-section-title {
+    font-size: clamp(1.8rem, 5.5vw, 2.4rem);
+  }
+  .scroll-section-subtitle {
+    font-size: clamp(0.9rem, 2.8vw, 1.2rem);
+  }
+  .scroll-section-content {
+    flex-direction: column; /* 카드 세로 정렬 */
+    align-items: center;
+    gap: 20px;
+  }
+  .content-item {
+    width: 90%;
+    max-width: 400px;
+    margin-bottom: 0;
+    padding: 25px;
+  }
+  .content-item-icon { /* 태블릿에서 아이콘 크기 조정 */
+    width: 70px;
+    height: 70px;
+  }
+  .content-item-title {
+    font-size: 1.3rem; /* 태블릿에서 카드 제목 조정 */
+  }
+  .content-item-description {
+    font-size: 0.9rem; /* 태블릿에서 카드 내용 조정 */
+  }
+  .qna-board-image {
+    width: 90%;
+    max-width: 450px;
   }
 }
 
-@media (max-width: 480px) {
-  .logo {
+/* 481px ~ 768px (일반 모바일 가로 또는 큰 모바일 세로) */
+@media (max-width: 768px) { /* 768px 이하가 아닌 481px~768px 구간을 의미 */
+  .homepage-logo {
     font-size: 1.3rem;
   }
-
+  .login-button {
+    font-size: 0.9rem;
+  }
+  .webpage-container {
+    padding: 10% 4%;
+    margin-bottom: 60px;
+  }
+  .webpage-main {
+    gap: 2rem;
+  }
   .main-title {
-    font-size: 1.4rem;
+    font-size: clamp(1.8rem, 7.5vw, 2.5rem); /* 모바일 제목 크기 */
+    margin-bottom: 0.8rem;
   }
-
   .main-subtitle {
-    font-size: 1rem;
+    font-size: clamp(0.9rem, 4.5vw, 1.2rem); /* 모바일 부제목 크기 */
+    margin-bottom: 2rem;
   }
-
   .subscribe-button {
-    font-size: 1rem;
-    padding: 0.6rem 1.5rem;
+    font-size: clamp(0.9rem, 4.5vw, 1.2rem);
+    padding: 0.7rem 1.8rem;
+  }
+  .main-image {
+    max-width: 80%;
+  }
+  .scroll-section {
+    padding: 12% 4%;
+  }
+  .scroll-section-title {
+    font-size: clamp(1.6rem, 7vw, 2.2rem);
+  }
+  .scroll-section-subtitle {
+    font-size: clamp(0.85rem, 4.5vw, 1.1rem);
+  }
+  .content-item {
+    padding: 20px;
+    width: 95%;
+  }
+  .content-item-icon {
+    width: 60px; /* 아이콘 크기 더 줄임 */
+    height: 60px;
+  }
+  .content-item-title {
+    font-size: 1.2rem;
+  }
+  .content-item-description {
+    font-size: 0.85rem;
+  }
+  .qna-board-image {
+    width: 90%;
+  }
+}
+
+/* 480px 이하 (작은 모바일) */
+@media (max-width: 480px) {
+  /* 768px 이하와 겹치므로 여기서는 더 작은 화면에 특화된 스타일만 */
+  .main-title {
+    font-size: clamp(1.6rem, 8.5vw, 2.2rem); /* 더 작게 */
+  }
+  .main-subtitle {
+    font-size: clamp(0.8rem, 5.5vw, 1.1rem); /* 더 작게 */
+  }
+  .subscribe-button {
+    font-size: clamp(0.8rem, 5.5vw, 1.1rem);
+    padding: 0.7rem 1.8rem;
+    margin: 0 auto; /* 재강조 */
+    justify-content: center;
+    align-self: center;
+    width: fit-content; /* 버튼 내용에 맞춰 너비 설정 */
+  }
+  .scroll-section-title {
+    font-size: clamp(1.4rem, 8vw, 2rem);
+  }
+  .scroll-section-subtitle {
+    font-size: clamp(0.8rem, 5.5vw, 1rem);
+  }
+  .content-item-icon {
+    width: 50px;
+    height: 50px;
+  }
+  .content-item-title {
+    font-size: 1.1rem;
+  }
+  .content-item-description {
+    font-size: 0.8rem;
   }
 }
