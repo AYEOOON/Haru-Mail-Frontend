@@ -102,7 +102,7 @@ const Header: React.FC = () => {
                 <Link to="/list">일기 목록</Link>
                 <Link to="/search">일기 검색</Link>
                 <Link to="/setting">설정</Link>
-                <button className="logout-button" onClick={handleLogout}>로그아웃</button>
+                <button className="logout-button" onClick={handleLogout} id="logout-btn">로그아웃</button>
             </nav>
 
             {menuOpen && <div className="overlay" onClick={() => setMenuOpen(false)} />}
