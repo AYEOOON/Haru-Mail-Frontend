@@ -26,23 +26,6 @@ const Header: React.FC = () => {
         setToken(accessToken);
     }, []);
 
-    //외부 클릭 시 메뉴 닫기
-    // useEffect(() => {
-    //     const handleClickOutside = (event: MouseEvent) => {
-    //         if (navRef.current && !navRef.current.contains(event.target as Node)) {
-    //             setMenuOpen(false);
-    //         }
-    //     };
-    //
-    //     if (menuOpen) {
-    //         document.addEventListener('mousedown', handleClickOutside);
-    //     }
-    //
-    //     return () => {
-    //         document.removeEventListener('mousedown', handleClickOutside);
-    //     };
-    // }, [menuOpen]);
-
     // 외부 클릭 시 메뉴 닫기
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -73,7 +56,7 @@ const Header: React.FC = () => {
         }
 
         try {
-            const logoutRes = await fetch('http://localhost:8080/auth/logout', {
+            const logoutRes = await fetch('http://localhost:8080/api/auth/logout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -101,7 +84,7 @@ const Header: React.FC = () => {
 
     return (
         <header className="header">
-            <Link to="/" className="logo">하루 메일</Link>
+            <Link to="/" className="header-logo">하루 메일</Link>
 
             <div className="hamburger" onClick={() => setMenuOpen(!menuOpen)}>
                 {menuOpen ? (
@@ -119,8 +102,10 @@ const Header: React.FC = () => {
                 <Link to="/list">일기 목록</Link>
                 <Link to="/search">일기 검색</Link>
                 <Link to="/setting">설정</Link>
-                <button onClick={handleLogout}>로그아웃</button>
+                <button className="logout-button" onClick={handleLogout}>로그아웃</button>
             </nav>
+
+            {menuOpen && <div className="overlay" onClick={() => setMenuOpen(false)} />}
         </header>
     );
 };
