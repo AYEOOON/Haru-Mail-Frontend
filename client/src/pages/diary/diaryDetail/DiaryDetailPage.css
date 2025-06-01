@@ -132,21 +132,15 @@
 
 /* 모바일 화면에서는 뒤로가기 버튼이 맨 위에 오도록 수정 */
 @media (max-width: 768px) {
-    /* 뒤로가기 버튼을 화면 상단에 고정 */
     .backButton {
-        position: fixed;
-        top: 10px;
+        position: absolute;
+        top: 1px;
         left: 15px;
-        z-index: 1000; /* 항상 맨 위에 표시 */
-    }
-
-    /* 제목과 다른 요소들이 뒤로가기 버튼 아래로 배치되도록 */
-    .container {
-        margin-top: 30px; /* 버튼이 위에 고정되므로 제목을 아래로 위치시킴 */
+        z-index: 1000;
     }
 
     .title {
         font-size: 22px;
-        margin-top: 60px; /* 뒤로가기 버튼 아래로 제목 배치 */
+        margin-top: 60px;
     }
 }

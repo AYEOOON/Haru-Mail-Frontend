@@ -11,6 +11,7 @@ export const DiaryEditorPage: React.FC = () => {
     const editorContainerRef = useRef<HTMLDivElement | null>(null);
     const [showModal, setShowModal] = useState(false);
     const navigate = useNavigate();
+    const [loading, setLoading] = useState(false);
 
     const [categoryTags, setCategoryTags] = useState<CategoryTags>(initialCategoryTags);
     const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -35,7 +36,9 @@ export const DiaryEditorPage: React.FC = () => {
     useEffect(() => {
         const checkAuthAndFetchData = async () => {
             try {
-                // 1. 사용자 인증 상태 확인
+                setLoading(true);
+
+                // 1. 인증 확인
                 const userRes = await fetch('http://localhost:8080/api/auth/me', {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' },
@@ -43,65 +46,51 @@ export const DiaryEditorPage: React.FC = () => {
                 });
 
                 if (!userRes.ok) {
-                    // 서버 응답이 성공(2xx)이 아니거나, 특히 401 Unauthorized인 경우
-                    console.warn('인증되지 않은 접근 또는 세션 만료:', userRes.status);
                     alert('로그인이 필요하거나 세션이 만료되었습니다. 다시 로그인해주세요.');
                     navigate('/');
                     return;
                 }
 
-                // 2. URL 파라미터로 받은 질문 타이틀 설정
+                // 2. 질문 타이틀 설정
                 if (questionText) {
                     setTitle(decodeURIComponent(questionText) + '?');
                 }
 
                 // 3. 에디터 초기화
                 if (editorContainerRef.current) {
-                    //initializeEditor(editorContainerRef.current);
                     initializeEditor(editorContainerRef.current, onEditorChange);
                 }
 
                 // 4. 기타 태그 불러오기
                 const accessToken = localStorage.getItem("accessToken");
-                fetch('http://localhost:8080/api/category/6' , {
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`
-                    },
+                const response = await fetch('http://localhost:8080/api/category/6', {
+                    headers: { 'Authorization': `Bearer ${accessToken}` },
                     credentials: "include"
-                })
-                    .then(async response => {
-                        if (response.status === 204) {
-                            return []; // 내용 없을 때 빈 배열 반환
-                        } else if (!response.ok) {
-                            throw new Error(`기타 태그 불러오기 실패: ${response.status}`);
-                        }
-                        return await response.json();
-                    })
-                    .then(data => {
-                        console.log('서버에서 가져온 기타 태그 데이터:', data);
+                });
 
-                        const newTag = data.map((tag: any) => ({
-                            id: tag.tagId,
-                            emoji: '🏷️',
-                            label: tag.name
-                        }));
+                if (response.status === 204) {
+                    setCategoryTags(prev => ({ ...prev, '기타': [] }));
+                } else if (!response.ok) {
+                    throw new Error(`기타 태그 불러오기 실패: ${response.status}`);
+                } else {
+                    const data = await response.json();
+                    const newTag = data.map((tag: any) => ({
+                        id: tag.tagId,
+                        emoji: '🏷️',
+                        label: tag.name
+                    }));
+                    setCategoryTags(prev => ({ ...prev, '기타': newTag }));
+                }
 
-                        setCategoryTags(prev => ({
-                            ...prev,
-                            '기타': newTag
-                        }));
-
-                        setNewTagName('');
-                        setIsAddingTag(false);
-                    })
-                    .catch(error => {
-                        console.error('기타 태그 불러오기 중 오류 발생:', error);
-                    });
+                setNewTagName('');
+                setIsAddingTag(false);
 
             } catch (error) {
                 console.error('페이지 초기 로딩 중 치명적인 오류 발생:', error);
                 alert('페이지 로딩 중 오류가 발생했습니다. 다시 시도해주세요.');
                 navigate('/');
+            } finally {
+                setLoading(false);
             }
         };
 
@@ -111,6 +100,86 @@ export const DiaryEditorPage: React.FC = () => {
             destroyEditor();
         };
     }, [questionText, navigate]);
+
+    // useEffect(() => {
+    //     const checkAuthAndFetchData = async () => {
+    //         try {
+    //             // 1. 사용자 인증 상태 확인
+    //             const userRes = await fetch('http://localhost:8080/api/auth/me', {
+    //                 method: 'GET',
+    //                 headers: { 'Content-Type': 'application/json' },
+    //                 credentials: 'include',
+    //             });
+    //
+    //             if (!userRes.ok) {
+    //                 // 서버 응답이 성공(2xx)이 아니거나, 특히 401 Unauthorized인 경우
+    //                 console.warn('인증되지 않은 접근 또는 세션 만료:', userRes.status);
+    //                 alert('로그인이 필요하거나 세션이 만료되었습니다. 다시 로그인해주세요.');
+    //                 navigate('/');
+    //                 return;
+    //             }
+    //
+    //             // 2. URL 파라미터로 받은 질문 타이틀 설정
+    //             if (questionText) {
+    //                 setTitle(decodeURIComponent(questionText) + '?');
+    //             }
+    //
+    //             // 3. 에디터 초기화
+    //             if (editorContainerRef.current) {
+    //                 //initializeEditor(editorContainerRef.current);
+    //                 initializeEditor(editorContainerRef.current, onEditorChange);
+    //             }
+    //
+    //             // 4. 기타 태그 불러오기
+    //             const accessToken = localStorage.getItem("accessToken");
+    //             fetch('http://localhost:8080/api/category/6' , {
+    //                 headers: {
+    //                     'Authorization': `Bearer ${accessToken}`
+    //                 },
+    //                 credentials: "include"
+    //             })
+    //                 .then(async response => {
+    //                     if (response.status === 204) {
+    //                         return []; // 내용 없을 때 빈 배열 반환
+    //                     } else if (!response.ok) {
+    //                         throw new Error(`기타 태그 불러오기 실패: ${response.status}`);
+    //                     }
+    //                     return await response.json();
+    //                 })
+    //                 .then(data => {
+    //                     console.log('서버에서 가져온 기타 태그 데이터:', data);
+    //
+    //                     const newTag = data.map((tag: any) => ({
+    //                         id: tag.tagId,
+    //                         emoji: '🏷️',
+    //                         label: tag.name
+    //                     }));
+    //
+    //                     setCategoryTags(prev => ({
+    //                         ...prev,
+    //                         '기타': newTag
+    //                     }));
+    //
+    //                     setNewTagName('');
+    //                     setIsAddingTag(false);
+    //                 })
+    //                 .catch(error => {
+    //                     console.error('기타 태그 불러오기 중 오류 발생:', error);
+    //                 });
+    //
+    //         } catch (error) {
+    //             console.error('페이지 초기 로딩 중 치명적인 오류 발생:', error);
+    //             alert('페이지 로딩 중 오류가 발생했습니다. 다시 시도해주세요.');
+    //             navigate('/');
+    //         }
+    //     };
+    //
+    //     checkAuthAndFetchData();
+    //
+    //     return () => {
+    //         destroyEditor();
+    //     };
+    // }, [questionText, navigate]);
 
     useEffect(() => {
         if (shouldNavigate && pendingNavigation) {
@@ -418,6 +487,12 @@ export const DiaryEditorPage: React.FC = () => {
                             <button className="modal-close-button" onClick={cancelLeave}>아니요</button>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {loading && (
+                <div className="loading-overlay">
+                    <div className="loading-spinner">로딩 중...</div>
                 </div>
             )}
         </div>
