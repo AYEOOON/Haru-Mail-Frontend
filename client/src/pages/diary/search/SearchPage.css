@@ -1,7 +1,7 @@
 /* 메인 콘텐츠 영역 전체 패딩과 폰트 설정 */
 .main-content {
     padding: 40px;
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Pretendard', sans-serif;
 }
 
 /* 검색창 영역 정렬 */
@@ -44,7 +44,8 @@
 .category {
     padding: 8px 20px;
     border-radius: 20px;
-    background-color: #ddd;
+    background-color: #C5C5C5;
+    color: white;
     border: none;
     font-weight: bold;
     cursor: pointer;
@@ -52,7 +53,7 @@
 
 /* 선택된 카테고리 버튼 스타일 */
 .category.active {
-    background-color: #476BE3;
+    background-color: #eb1c24;
     color: white;
 }
 

@@ -70,7 +70,7 @@ const ListPage: React.FC = () => {
       try {
         setLoading(true);
         // 1) 사용자 정보 호출
-        const userRes = await fetch('http://localhost:8080/auth/me', {
+        const userRes = await fetch('http://localhost:8080/api/auth/me', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -90,7 +90,7 @@ const ListPage: React.FC = () => {
 
         // 2) 월과 연도를 쿼리 파라미터로 전달하여 일기 목록 호출
         const diaryRes = await fetch(
-          `http://localhost:8080/diary/list?year=${currentYear}&month=${currentMonth}`,
+          `http://localhost:8080/api/diary/list?year=${currentYear}&month=${currentMonth}`,
           {
             method: 'GET',
             headers: {

@@ -29,7 +29,7 @@ const DiaryDetailPage: React.FC = () => {
             if (!viewerContainerRef.current) return;
 
             try {
-                const res = await fetch(`http://localhost:8080/diary/${diaryId}`, { // 토큰 기반 인증
+                const res = await fetch(`http://localhost:8080/api/diary/${diaryId}`, { // 토큰 기반 인증
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${accessToken}`,

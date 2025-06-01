@@ -12,7 +12,7 @@ const MailSetting: React.FC = () => {
     async function checkAuthStatus() {
       try {
         setLoading(true);
-        const userRes = await fetch('http://localhost:8080/auth/me', {
+        const userRes = await fetch('http://localhost:8080/api/auth/me', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

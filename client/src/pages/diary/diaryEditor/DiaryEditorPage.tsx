@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Location } from 'react-router-dom';
 import Header from '../../header/Header.tsx';
 import { destroyEditor, getEditorData, getFormattedToday, initializeEditor } from './DiaryEditor.ts';
 import './DiaryEditorPage.css';
 import { CategoryTags, initialCategoryTags } from "./TagData.ts";
 import { handleTagClick, handleRemoveTag } from './TagHandler.ts';
+import {usePrompt} from "./usePrompt.tsx";
 
 export const DiaryEditorPage: React.FC = () => {
     const editorContainerRef = useRef<HTMLDivElement | null>(null);
@@ -26,12 +27,16 @@ export const DiaryEditorPage: React.FC = () => {
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [title, setTitle] = useState(questionText || "제목을 입력해주세요!");
 
+    const [isWriting, setIsWriting] = useState(false); // 일기 작성 여부
+    const [pendingNavigation, setPendingNavigation] = useState<null | (() => void)>(null);
+    const [showLeaveModal, setShowLeaveModal] = useState(false);
+    const [shouldNavigate, setShouldNavigate] = useState(false);
 
     useEffect(() => {
         const checkAuthAndFetchData = async () => {
             try {
                 // 1. 사용자 인증 상태 확인
-                const userRes = await fetch('http://localhost:8080/auth/me', {
+                const userRes = await fetch('http://localhost:8080/api/auth/me', {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
@@ -52,12 +57,13 @@ export const DiaryEditorPage: React.FC = () => {
 
                 // 3. 에디터 초기화
                 if (editorContainerRef.current) {
-                    initializeEditor(editorContainerRef.current);
+                    //initializeEditor(editorContainerRef.current);
+                    initializeEditor(editorContainerRef.current, onEditorChange);
                 }
 
                 // 4. 기타 태그 불러오기
                 const accessToken = localStorage.getItem("accessToken");
-                fetch('http://localhost:8080/category/6' , {
+                fetch('http://localhost:8080/api/category/6' , {
                     headers: {
                         'Authorization': `Bearer ${accessToken}`
                     },
@@ -106,8 +112,36 @@ export const DiaryEditorPage: React.FC = () => {
         };
     }, [questionText, navigate]);
 
+    useEffect(() => {
+        if (shouldNavigate && pendingNavigation) {
+            pendingNavigation();  // 모달 닫힌 뒤에 이동
+            setPendingNavigation(null); // 초기화
+            setShouldNavigate(false); // 초기화
+        }
+    }, [shouldNavigate, pendingNavigation]);
+
+    useEffect(() => {
+        const handleLogoutClick = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (target.closest('#logout-btn')) {
+                if (isWriting) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowLeaveModal(true);
+                }
+            }
+        };
+
+        window.addEventListener('click', handleLogoutClick, true); // 캡처 단계에서 감지
+
+        return () => {
+            window.removeEventListener('click', handleLogoutClick, true);
+        };
+    }, [isWriting]);
+
     // 일기 저장
     const handleSave = async () => {
+        setIsWriting(false);
         const content = await getEditorData();
         const accessToken = localStorage.getItem("accessToken");
         const diaryData = {
@@ -125,7 +159,7 @@ export const DiaryEditorPage: React.FC = () => {
         console.log("보내는 데이터:", JSON.stringify(requestData));
 
         try {
-            const response = await fetch('http://localhost:8080/diary/save', {
+            const response = await fetch('http://localhost:8080/api/diary/save', {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -185,7 +219,7 @@ export const DiaryEditorPage: React.FC = () => {
             console.log("태그 생성:", newTag);
             const accessToken = localStorage.getItem("accessToken"); // 태그 생성 시점에 토큰 다시 가져오기
 
-            fetch('http://localhost:8080/tag/create', {
+            fetch('http://localhost:8080/api/tag/create', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -246,6 +280,36 @@ export const DiaryEditorPage: React.FC = () => {
         if (e.key === 'Enter') {
             setIsEditingTitle(false);
         }
+    };
+
+    // 일기 작성 여부
+    const onEditorChange = async () => {
+        try {
+            const content = await getEditorData();
+            if (!content || content.trim().length === 0) {
+                return;
+            }
+            setIsWriting(true);
+        } catch (error) {
+            console.error("에디터 데이터 로딩 실패:", error);
+        }
+    };
+
+    usePrompt(isWriting, (nextLocation: Location) => {
+        setPendingNavigation(() => () => navigate(nextLocation.pathname));
+        setShowLeaveModal(true);
+        return false;  // 이동 막음
+    });
+
+    // 예 클릭 시 실제 이동 수행
+    const confirmLeave = () => {
+        setShowLeaveModal(false);
+        setIsWriting(false);
+        setShouldNavigate(true);
+    };
+
+    const cancelLeave = () => {
+        setShowLeaveModal(false);
     };
 
     return (
@@ -341,6 +405,18 @@ export const DiaryEditorPage: React.FC = () => {
                     <div className="modal">
                         <p>저장이 완료되었습니다!</p>
                         <button className="modal-close-button" onClick={closeModal}>확인</button>
+                    </div>
+                </div>
+            )}
+
+            {showLeaveModal && (
+                <div className="modal-overlay">
+                    <div className="modal">
+                        <p>작성 중인 내용이 있습니다. 이동하시겠습니까?</p>
+                        <div className="modal-button-group">
+                            <button className="modal-close-button" onClick={confirmLeave}>예</button>
+                            <button className="modal-close-button" onClick={cancelLeave}>아니요</button>
+                        </div>
                     </div>
                 </div>
             )}
