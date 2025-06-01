@@ -1,5 +1,3 @@
-/* HomePage.css */
-
 /* 웹페이지 레이아웃 전체 */
 .webpage-layout {
   display: flex;
@@ -28,18 +26,14 @@
 }
 
 .homepage-logo {
-  font-size: 1.5rem; /* rem 단위로 변경 (데스크톱 기본) */
-  font-weight: bold;
-  color: #333;
-  cursor: pointer;
-  user-select: none;
-  text-decoration: none; /* 링크 밑줄 제거 */
+    font-size: 1.7rem;
+    font-weight: bold;
+    color: #333;
 }
 
 .homepage-logo:hover {
-  opacity: 0.8;
-  transition: 0.2s;
-  color: #333;
+    color: #eb1c24;
+    transition: color 0.2s ease-in-out;
 }
 
 .login-button {
