@@ -1,3 +1,9 @@
+/* HTML의 기본 폰트 크기 설정 */
+html {
+    font-size: 62.5%;
+}
+
+/* 헤더 전체 */
 .header {
     display: flex;
     height: 70px;
@@ -13,22 +19,26 @@
     font-family: 'Pretendard', sans-serif;
 }
 
+/* 헤더 로고 */
 .header-logo {
-    font-size: 1.7rem;
+    font-size: 24px;
     font-weight: bold;
     color: #333;
 }
 
+/* 헤더 로고 호버 스타일 */
 .header-logo:hover {
     color: #eb1c24;
     transition: color 0.2s ease-in-out;
 }
 
+/* 네비게이션 메뉴 */
 .nav {
     display: flex;
     align-items: center;
 }
 
+/* 네비게이션 링크 및 버튼 */
 .nav a,
 .nav button {
     margin-left: 20px;
@@ -42,7 +52,7 @@
     font-family: inherit;
 }
 
-/* 햄버거 버튼 스타일 */
+/* 햄버거 버튼 */
 .hamburger {
     display: none;
     flex-direction: column;
@@ -50,7 +60,7 @@
     z-index: 110;
 }
 
-/* 세 줄 메뉴 바 스타일 */
+/* 햄버거 버튼 바 */
 .hamburger .bar {
     width: 25px;
     height: 3px;
@@ -58,7 +68,7 @@
     margin: 4px 0;
 }
 
-/* X 아이콘 스타일 */
+/* 닫기 아이콘 */
 .close-icon {
     font-size: 28px;
     color: #333;
@@ -76,6 +86,7 @@
     z-index: 104;
 }
 
+/* 로그아웃 버튼 */
 .logout-button {
     background-color: #eb1c24 !important;
     color: white !important;
@@ -84,8 +95,9 @@
     cursor: pointer;
 }
 
-/* 모바일용 스타일 */
+/* 모바일용 스타일 (768px 이하) */
 @media (max-width: 768px) {
+    /* 모바일 네비게이션 메뉴 */
     .nav {
         position: fixed;
         top: 0;
@@ -105,10 +117,12 @@
         max-height: 100vh;
     }
 
+    /* 모바일 네비게이션 메뉴 열림 */
     .nav.open {
         transform: translateX(0);
     }
 
+    /* 모바일 네비게이션 링크 및 버튼 */
     .nav a,
     .nav button {
         margin: 15px 20px;
@@ -116,10 +130,12 @@
         color: #333;
     }
 
+    /* 모바일 햄버거 버튼 */
     .hamburger {
         display: flex;
     }
 
+    /* 모바일 닫기 아이콘 */
     .close-icon {
         color: #333;
         padding: 0 8px;
