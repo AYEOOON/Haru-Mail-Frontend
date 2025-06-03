@@ -124,7 +124,8 @@ const SearchPage: React.FC = () => {
                         {categoryTags[selectedCategory]?.map((tag) => (
                             <span
                                 key={tag.id}
-                                className="tag-button"
+                                // 여기를 수정합니다.
+                                className={`tag-button ${selectedTagIds.includes(tag.id) ? "active" : ""}`}
                                 onClick={() => handleTagClick(tag, selectedTags, selectedTagIds, setSelectedTags, setSelectedTagIds)}
                                 data-id={tag.id}
                             >
