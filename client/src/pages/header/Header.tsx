@@ -8,7 +8,7 @@ const Header: React.FC = () => {
     const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
     const navRef = useRef<HTMLDivElement>(null);
-    const headerRef = useRef<HTMLDivElement>(null);
+    const headerRef = useRef<HTMLDivElement>(null); // headerRef는 현재 사용되지 않지만, 외부 클릭 로직에 포함되어 있어 남겨둡니다.
 
     // 쿠키에서 토큰을 읽는 함수
     const getAccessTokenFromCookies = (): string => {
@@ -30,13 +30,12 @@ const Header: React.FC = () => {
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             const target = event.target as Node;
-            // 메뉴가 열려 있고, nav나 header 영역 밖을 클릭했을 때만 닫음
+            // 메뉴가 열려 있고, nav 영역 밖을 클릭했을 때 닫음
+            // headerRef는 햄버거 메뉴 자체를 포함하므로, 이 조건에서 제외하는 것이 일반적입니다.
             if (
                 menuOpen &&
                 navRef.current &&
-                !navRef.current.contains(target) &&
-                headerRef.current &&
-                !headerRef.current.contains(target)
+                !navRef.current.contains(target)
             ) {
                 setMenuOpen(false);
             }
@@ -51,7 +50,9 @@ const Header: React.FC = () => {
     const handleLogout = async () => {
         if (!token) {
             console.log('로그인 상태가 아닙니다.');
-            navigate('/'); // 또는 로그인 페이지 경로
+            // 사용자가 이미 로그아웃 상태라면 알림 후 홈으로 이동
+            alert('이미 로그아웃되었습니다.'); // 추가: 이미 로그아웃된 경우 안내
+            navigate('/');
             return;
         }
 
@@ -75,6 +76,8 @@ const Header: React.FC = () => {
             // 로그아웃 성공 처리
             console.log('로그아웃 성공');
             document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+            setToken(''); // 토큰 상태 초기화
+            alert('로그아웃되었습니다.'); // 추가: 로그아웃 성공 알림
             navigate('/');
         } catch (error) {
             console.error('로그아웃 처리 중 오류 발생:', error);
@@ -102,7 +105,13 @@ const Header: React.FC = () => {
                 <Link to="/list">일기 목록</Link>
                 <Link to="/search">일기 검색</Link>
                 <Link to="/setting">설정</Link>
-                <button className="logout-button" onClick={handleLogout} id="logout-btn">로그아웃</button>
+                {/* 토큰이 있을 때만 로그아웃 버튼을 표시하도록 조건부 렌더링 */}
+                {token ? (
+                    <button className="logout-button" onClick={handleLogout} id="logout-btn">로그아웃</button>
+                ) : (
+                    // 토큰이 없을 때 로그인 버튼을 표시 (선택 사항)
+                    <button className="login-button" onClick={() => navigate('/login')}>로그인</button> // '로그인' 페이지 경로에 맞게 수정
+                )}
             </nav>
 
             {menuOpen && <div className="overlay" onClick={() => setMenuOpen(false)} />}
