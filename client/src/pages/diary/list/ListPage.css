@@ -26,13 +26,13 @@
 }
 
 .header-container h2 {
-  font-size: clamp(1.4rem, 3.2vw, 2.0rem);
+  font-size: clamp(2.2rem, 4vw, 3rem);
   color: #333;
   text-align: center;
   line-height: 1.4;
   font-weight: normal;
   margin-top: -2rem;
-  margin-bottom: 3rem;
+  margin-bottom: 5rem;
 }
 
 .username {
@@ -57,7 +57,7 @@
   font-size: clamp(1.5rem, 4.5vw, 2.2rem);
   cursor: pointer;
   color: #333;
-  padding: 0 2rem;
+  padding: 0 3rem;
   transition: color 0.2s ease;
 }
 
@@ -66,7 +66,7 @@
 }
 
 .month-label {
-  font-size: clamp(1.3rem, 3.5vw, 1.8rem);
+  font-size: clamp(2rem, 4vw, 3rem);
   font-weight: bold;
 }
 
@@ -88,7 +88,7 @@
   align-items: center;
   background-color: #f1f1f1;
   border-radius: 15px;
-  padding: clamp(0.3rem, 1.3vw, 0.7rem);
+  padding: clamp(1rem, 1.3vw, 1rem);
   width: 100%;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   cursor: pointer;
@@ -113,25 +113,21 @@
   flex-shrink: 0;
   text-align: center;
   line-height: 1;
-  width: clamp(30px, 10vw, 45px); /* 최소 40px, 뷰포트 너비의 11%, 최대 60px */
-  height: clamp(30px, 10vw, 45px); /* 원형 유지를 위해 width와 동일하게 설정 */
-}
-
-/* 날짜 숫자 */
-.date-tag .date-number {
-  font-size: clamp(1rem, 3vw, 1.5rem); /* 부모 크기에 맞춰 폰트 크기 조정 */
-  line-height: 1;
+  width: clamp(30px, 10vw, 45px);
+  height: clamp(30px, 10vw, 45px);
+  font-size: clamp(1.5rem, 1.5vw, 1.5rem);
 }
 
 .diary-title {
   flex-grow: 1;
-  font-size: clamp(1.1rem, 2.2vw, 1.3rem);
+  font-size: clamp(1.8rem, 2vw, 2rem);
   font-weight: 600;
   color: #333;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
-  padding-right: 0.5rem;
+  padding-right: 0.3rem;
+  padding-left: 2rem;
 }
 
 .write-button {
@@ -167,4 +163,8 @@
   font-size: 1.5rem;
   color: #e60023;
   font-weight: bold;
+}
+
+.empty{
+  font-size: clamp(1.8rem, 2vw, 2rem);
 }

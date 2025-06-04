@@ -45,14 +45,14 @@ html {
 
 /* 카테고리 버튼 기본 스타일 */
 .category {
-    padding: clamp(0.8rem, 1.3vw, 1.5rem) clamp(0.5rem, 1vw, 1.5rem);
+    padding: clamp(0.4rem, 1.3vw, 1.5rem) clamp(0.2rem, 0.5vw, 1.5rem);
     border-radius: 0;
     background-color: transparent;
     color: #bababa;
     border: none;
     font-weight: bold;
     cursor: pointer;
-    font-size: clamp(1.6rem, 2.1vw, 2rem);
+    font-size: clamp(1.3rem, 2.1vw, 2rem);
     outline: none;
     flex-shrink: 0;
     white-space: nowrap;
@@ -120,7 +120,7 @@ html {
     display: flex;
     align-items: center;
     background-color: #f2f2f2;
-    padding: clamp(2rem, 3vw, 3rem);
+    padding: clamp(0.7rem, 1.7vw, 1.7rem);
     border-radius: clamp(0.8rem, 1.2vw, 1.2rem);
     margin: 0 clamp(4rem, 6vw, 6rem) clamp(2rem, 3vw, 3rem);
     animation: fadeSlideIn 0.5s ease forwards;
@@ -132,8 +132,8 @@ html {
 .date-box {
     background-color: #E53935;
     color: white;
-    width: clamp(5.5rem, 6.5vw, 6.5rem);
-    height: clamp(5.5rem, 6.5vw, 6.5rem);
+    width: clamp(5rem, 6vw, 6rem);
+    height: clamp(5rem, 6vw, 6rem);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -145,7 +145,14 @@ html {
 
 /* 질문 텍스트 */
 .question-text {
-    font-size: clamp(1.8rem, 2.2vw, 2.2rem);
+  flex-grow: 1;
+  font-size: clamp(2rem, 2vw, 2rem);
+  font-weight: 600;
+  color: #333;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding-right: 0.5rem;
 }
 
 /* 페이드 인 슬라이드 애니메이션 */
@@ -184,6 +191,7 @@ html {
     font-size: clamp(2rem, 3vw, 3rem);
     font-weight: bold;
     margin-bottom: clamp(0.8rem, 1vw, 1rem);
+    padding: 0 clamp(4rem, 6vw, 6rem);
 }
 
 /* 구분선 */
@@ -191,6 +199,8 @@ hr {
     border: none;
     border-top: 0.1rem solid #ccc;
     margin-bottom: clamp(1.5rem, 1.8vw, 1.8rem);
+    margin-left: clamp(4rem, 6vw, 6rem);
+    margin-right: clamp(4rem, 6vw, 6rem);
 }
 
 /* 선택된 태그를 보여주는 컨테이너 */
