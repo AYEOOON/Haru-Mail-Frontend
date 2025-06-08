@@ -73,7 +73,7 @@
   font-weight: bold;
   margin-bottom: 2.5rem;
   border-bottom: 1px solid #ccc;
-  padding-bottom: 0.8rem;
+  padding-bottom: 3rem;
 }
 
 .form {
@@ -84,7 +84,7 @@
 }
 
 .form label {
-  font-size: 1.2rem;
+  font-size: 1.8rem;
   display: flex;
   align-items: center;
   gap: 1rem;

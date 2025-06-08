@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import './Header.css';
+import apiClient from '../../utils/axiosInstance.ts'; // apiClient 임포트 경로 확인!
 
 const Header: React.FC = () => {
     const navigate = useNavigate();
@@ -8,7 +9,7 @@ const Header: React.FC = () => {
     const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
     const navRef = useRef<HTMLDivElement>(null);
-    const headerRef = useRef<HTMLDivElement>(null); // headerRef는 현재 사용되지 않지만, 외부 클릭 로직에 포함되어 있어 남겨둡니다.
+    const headerRef = useRef<HTMLDivElement>(null);
 
     // 쿠키에서 토큰을 읽는 함수
     const getAccessTokenFromCookies = (): string => {
@@ -30,13 +31,11 @@ const Header: React.FC = () => {
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             const target = event.target as Node;
-            // 메뉴가 열려 있고, nav 영역 밖을 클릭했을 때 닫음
-            // headerRef는 햄버거 메뉴 자체를 포함하므로, 이 조건에서 제외하는 것이 일반적입니다.
-            if (
-                menuOpen &&
-                navRef.current &&
-                !navRef.current.contains(target)
-            ) {
+            if (menuOpen && navRef.current && !navRef.current.contains(target)) {
+                const hamburger = document.querySelector('.hamburger');
+                if (hamburger && hamburger.contains(target)) {
+                    return;
+                }
                 setMenuOpen(false);
             }
         };
@@ -57,31 +56,27 @@ const Header: React.FC = () => {
         }
 
         try {
-            const logoutRes = await fetch('http://localhost:8080/api/auth/logout', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`,
-                },
-                credentials: 'include',
-            });
+            const logoutRes = await apiClient.post('/api/auth/logout');
 
-            if (!logoutRes.ok) {
-                const errorData = await logoutRes.json();
-                console.error('로그아웃 실패:', errorData);
-                alert('로그아웃에 실패했습니다.');
-                return;
-            }
+            console.log('로그아웃 성공', logoutRes.data);
 
-            // 로그아웃 성공 처리
-            console.log('로그아웃 성공');
+            // Access Token 쿠키 삭제 (expires를 과거로 설정)
             document.cookie = "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            setToken(''); // 토큰 상태 초기화
-            alert('로그아웃되었습니다.'); // 추가: 로그아웃 성공 알림
+            // Refresh Token 쿠키 삭제 (이름이 'refreshToken'인지 확인 필수)
+            document.cookie = "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+            setToken(''); // React 상태 초기화
+            alert('로그아웃되었습니다.');
             navigate('/');
-        } catch (error) {
+        } catch (error: any) {
             console.error('로그아웃 처리 중 오류 발생:', error);
-            alert('로그아웃 처리 중 오류가 발생했습니다.');
+
+            if (error.response && error.response.status === 401) {
+                alert('세션이 만료되어 로그아웃 처리 중 오류가 발생했습니다. 다시 로그인해주세요.');
+                navigate('/');
+            } else {
+                alert('로그아웃 처리 중 오류가 발생했습니다.');
+            }
         }
     };
 
