@@ -5,20 +5,13 @@
     box-sizing: border-box;
 }
 
-/*html, body, #root {*/
-/*    height: 100%;*/
-/*    width: 100%;*/
-/*    overflow-y: auto;*/
-/*    overflow-x: hidden;*/
-/*}*/
-
 /* #root 영역에서 스크롤 제어 */
 #root {
-    position: relative;  /* 자식 요소가 잘 보이도록 설정 */
+    position: relative;
     height: 100%;
     width: 100%;
-    overflow-x: hidden;  /* 가로 스크롤바 숨김 */
-    overflow-y: auto;    /* 세로 스크롤바 필요 시 표시 */
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 /* body와 html의 설정 */
@@ -27,7 +20,7 @@ html, body {
     width: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden;    /* 불필요한 스크롤바 숨김 */
+    overflow: hidden;
 }
 
 /* 전체 페이지 */
@@ -36,7 +29,7 @@ html, body {
     flex-direction: column;
     height: 100%;
     width: 100vw;
-    align-items: flex-start; /* 상단 정렬 */
+    align-items: flex-start;
 }
 
 /* 메인 콘텐츠 */
@@ -60,7 +53,7 @@ html, body {
     font-weight: bold;
     margin-top: 10px !important;
     margin-bottom: 8px;
-    line-height: 1.2; /* 제목의 라인 높이 */
+    line-height: 1.2;
 }
 
 .title-input {
@@ -72,16 +65,19 @@ html, body {
     width: 100%;
     margin-top: 10px !important;
     margin-bottom: 8px !important;
-    padding: 5px 0; /* 위아래 패딩 조정 */
-    height: 32px; /* 높이를 명시적으로 맞춤 */
-    line-height: 1.2; /* 제목과 입력 필드의 라인 높이 맞추기 */
-    box-sizing: border-box; /* padding 포함 크기 */
-    vertical-align: middle; /* 수직 정렬 */
+    padding: 5px 0;
+    height: 32px;
+    line-height: 1.2;
+    box-sizing: border-box;
+    vertical-align: middle;
 }
 
-.date {
-    font-size: 14px;
-    color: #888;
+.editor-date {
+    color: #999;
+    font-size: 15px;
+    margin-bottom: 10px;
+    text-align: left;
+    font-weight: bold;
 }
 
 /* editor.js */
@@ -203,15 +199,15 @@ html, body {
 }
 
 .tag {
-    background-color: #ffecec;
-    color: #eb1c24;
+    background-color: white;
+    color: #333;
+    border: 0.2rem solid #eb1c24;
     padding: 10px 20px;
     border-radius: 25px;
     font-size: 16px;
-    font-weight: 500;
-    border: 1.5px solid #eb1c24;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    font-weight: bold;
 }
 
 .tag:hover {
@@ -253,27 +249,30 @@ html, body {
     padding: 10px 20px;
     font-size: 15px;
     border-radius: 20px;
-    background-color: #eb1c24;
-    color: white;
+    background-color: white;
+    color: #333;
+    border: 0.15rem solid #D0D0D0;
     cursor: pointer;
     margin-top: 10px;
+    margin-left: 8px;
     transition: background-color 0.2s;
 }
 
 .add-category-button:hover {
-    background-color: #c3141a;
+    background-color: #eb1c24;
+    color: white;
 }
 
 /* 카테고리 태그 */
 .category-tag {
-    background-color: #ffecec;
-    color: #eb1c24;
+    background-color: white;
+    color: #333;
     padding: 6px 12px;
-    margin: 4px; /* 태그 간격 추가 */
+    margin: 4px;
     border-radius: 20px;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: 500;
-    border: 1.2px solid #eb1c24;
+    border: 0.15rem solid #D0D0D0;
     cursor: pointer;
     transition: background-color 0.2s ease;
     flex-wrap: wrap;
@@ -281,10 +280,22 @@ html, body {
     display: inline-flex;
 }
 
+.category-tag:hover {
+    background-color: #eb1c24;
+    color: white;
+}
+
+/* 선택된 카테고리 버튼 (active 상태) */
+.category-tag.active {
+    background-color: rgba(235, 28, 36, 0.15);
+    color: #eb1c24;
+    border: 0.15rem solid #eb1c24;
+}
+
 /* 카테고리 생성 */
 .new-tag-input {
     padding: 10px 14px;
-    margin: 8px 0;
+    margin: 8px 8px;
     border-radius: 6px;
     border: 2px solid crimson;
     width: 220px;
@@ -309,7 +320,7 @@ html, body {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999; /* 모달보다 위 */
+    z-index: 9999;
 }
 
 .loading-spinner {
