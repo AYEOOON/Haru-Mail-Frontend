@@ -53,7 +53,7 @@ axiosInstance.interceptors.response.use(
           failedQueue.push({ resolve, reject });
         }).then(token => {
           originalRequest.headers.Authorization = `Bearer ${token}`;
-          return apiClient(originalRequest); // 새 토큰으로 원본 요청 재시도
+          return axiosInstance(originalRequest); // 새 토큰으로 원본 요청 재시도
         }).catch(err => {
           return Promise.reject(err);
         });
@@ -74,7 +74,7 @@ axiosInstance.interceptors.response.use(
 
         // 원본 요청의 Authorization 헤더를 새 토큰으로 업데이트
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        return apiClient(originalRequest); // 업데이트된 요청으로 재시도
+        return axiosInstance(originalRequest); // 업데이트된 요청으로 재시도
       } catch (reissueError: any) {
         // 리프레시 토큰도 만료되었거나 유효하지 않은 경우
         console.error('Failed to re-issue access token:', reissueError);
