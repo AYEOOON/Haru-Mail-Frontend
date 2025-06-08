@@ -3,21 +3,20 @@ import { useState } from "react";
 import Header from '../../header/Header.tsx';
 import './SearchPage.css';
 import { CategoryTags, initialCategoryTags } from "../diaryEditor/TagData.ts";
-import {handleRemoveTag, handleTagClick} from "../diaryEditor/TagHandler.ts";
+import {handleRemoveTag} from "../diaryEditor/TagHandler.ts"; // Keep handleRemoveTag as is
 import { useNavigate } from 'react-router-dom';
 
 const SearchPage: React.FC = () => {
     const navigate = useNavigate();
     const categories = ["기분", "생활 & 경험", "취미", "특별한 순간", "날씨", "기타"];
-    const [selectedCategory, setSelectedCategory] = useState<string>(''); // 선택된 카테고리
-    const [selectedTags, setSelectedTags] = useState<{ id: number; emoji: string; label: string }[]>([]); // 선택된 태그 / 혹시 오류나면 id: number; 지우기
-    const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]); // 태그 id만 저장
-    const accessToken = localStorage.getItem("accessToken"); // 저장된 토큰 가져오기
-    const [categoryTags, setCategoryTags] = useState<CategoryTags>(initialCategoryTags); // 카테고리 리스트
-    const [searchResults, setSearchResults] = useState<{ diaryId: number; title: string; date: string }[]>([]); // 검색 결과
+    const [selectedCategory, setSelectedCategory] = useState<string>('');
+    const [selectedTags, setSelectedTags] = useState<{ id: number; emoji: string; label: string }[]>([]);
+    const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+    const accessToken = localStorage.getItem("accessToken");
+    const [categoryTags, setCategoryTags] = useState<CategoryTags>(initialCategoryTags);
+    const [searchResults, setSearchResults] = useState<{ diaryId: number; title: string; date: string }[]>([]);
 
     useEffect(() => {
-        // 기타 태그 불러오기
         fetch('http://localhost:8080/api/category/6' , {
             headers: {
                 'Authorization': `Bearer ${accessToken}`
@@ -26,7 +25,7 @@ const SearchPage: React.FC = () => {
         })
             .then(async response => {
                 if (response.status === 204) {
-                    return []; // 내용 없을 때 빈 배열
+                    return [];
                 } else if (!response.ok) {
                     throw new Error('서버 오류');
                 }
@@ -37,7 +36,7 @@ const SearchPage: React.FC = () => {
 
                 const newTag = data.map((tag: any) => ({
                     id: tag.tagId,
-                    emoji: '🏷️', // 임시
+                    emoji: '🏷️',
                     label: tag.name
                 }));
 
@@ -74,11 +73,31 @@ const SearchPage: React.FC = () => {
             })
             .then(data => {
                 console.log("검색 결과:", data);
-                setSearchResults(data); // 검색 결과 상태에 저장
+                setSearchResults(data);
             })
             .catch(error => {
                 console.error("검색 오류:", error);
             });
+    };
+
+    // Modified handleTagClick function
+    const handleTagClick = (tag: { id: number; emoji: string; label: string }) => {
+        // Check if the tag is already selected
+        const isSelected = selectedTagIds.includes(tag.id);
+
+        if (isSelected) {
+            // If already selected, remove it
+            setSelectedTags(prev => prev.filter(t => t.id !== tag.id));
+            setSelectedTagIds(prev => prev.filter(id => id !== tag.id));
+        } else {
+            // If not selected, check the limit before adding
+            if (selectedTags.length < 5) {
+                setSelectedTags(prev => [...prev, tag]);
+                setSelectedTagIds(prev => [...prev, tag.id]);
+            } else {
+                alert("태그는 5개까지만 선택할 수 있습니다.");
+            }
+        }
     };
 
     return (
@@ -118,15 +137,13 @@ const SearchPage: React.FC = () => {
                     ))}
                 </div>
 
-                {/* 선택된 카테고리에 해당하는 태그 표시 */}
                 {selectedCategory && (
                     <div className="tag-wrapper">
                         {categoryTags[selectedCategory]?.map((tag) => (
                             <span
                                 key={tag.id}
-                                // 여기를 수정합니다.
                                 className={`tag-button ${selectedTagIds.includes(tag.id) ? "active" : ""}`}
-                                onClick={() => handleTagClick(tag, selectedTags, selectedTagIds, setSelectedTags, setSelectedTagIds)}
+                                onClick={() => handleTagClick(tag)} // Call the local handleTagClick
                                 data-id={tag.id}
                             >
                                 {tag.emoji} {tag.label}
