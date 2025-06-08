@@ -81,9 +81,6 @@ export const DiaryEditorPage: React.FC = () => {
                 setIsAddingTag(false);
 
 
-                setNewTagName('');
-                setIsAddingTag(false);
-
             } catch (error: any) { // error 타입을 any로 설정하여 error.response 등 접근 가능하게 함
                 console.error('페이지 초기 로딩 중 치명적인 오류 발생:', error);
 
