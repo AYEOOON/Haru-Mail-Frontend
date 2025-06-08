@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Header from '../header/Header';
 import './MailSettingPage.css';
 import { useNavigate } from 'react-router-dom';
+import apiClient from '../../utils/axiosInstance.ts'; // apiClient 임포트 경로 확인!
 
 const MailSetting: React.FC = () => {
   const navigate = useNavigate();
@@ -12,26 +13,22 @@ const MailSetting: React.FC = () => {
     async function checkAuthStatus() {
       try {
         setLoading(true);
-        const userRes = await fetch('http://localhost:8080/api/auth/me', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include',
-        });
+        // fetch 대신 apiClient 사용
+        await apiClient.get('/api/auth/me');
+        // apiClient는 401 Unauthorized와 같은 에러를 인터셉터에서 처리하고 리다이렉트하므로,
+        // 여기서는 성공적으로 응답을 받았다면 별도의 userRes.ok 체크가 필요 없음
 
-        if (!userRes.ok) {
-          // 인증 실패 (예: 401 Unauthorized) 시 로그인 페이지로 리다이렉트
-          console.error('사용자 인증 실패:', userRes.status, userRes.statusText);
-          alert('로그인이 필요하거나 세션이 만료되었습니다. 다시 로그인해주세요.');
-          navigate('/');
-          return;
-        }
-
-      } catch (error) {
+      } catch (error: any) { // Axios 에러 처리
         console.error('인증 상태 확인 중 오류 발생:', error);
-        alert('페이지 로딩 중 오류가 발생했습니다. 다시 로그인해주세요.');
-        navigate('/');
+
+        // apiClient 인터셉터에서 401 Unauthorized 에러를 처리하고 로그인 페이지로 리다이렉트
+        if (error.response && error.response.status === 401) {
+          alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+          navigate('/');
+        } else {
+          alert('페이지 로딩 중 오류가 발생했습니다. 다시 로그인해주세요.');
+          navigate('/');
+        }
       } finally {
         setLoading(false);
       }
@@ -54,36 +51,24 @@ const MailSetting: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // handleSubmit 시점에서도 다시 한번 인증 확인 (불필요할 수 있지만, 확실성을 위해)
-    // 혹은 API 호출 자체가 401을 반환할 때 처리
     try {
-      const response = await fetch('http://localhost:8080/api/mail/settings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ selectedOption }),
-        credentials: "include",
-      });
+      // fetch 대신 apiClient.post() 사용
+      // credentials: "include"는 axiosInstance에 설정되어 있으므로 별도 명시 불필요
+      const response = await apiClient.post('/api/mail/settings', { selectedOption });
 
-      if (!response.ok) {
-        // API 호출 실패 시 로그인 페이지로 리다이렉트 (인증 문제로 가정)
-        if (response.status === 401) {
-          alert('세션이 만료되어 설정을 저장할 수 없습니다. 다시 로그인해주세요.');
-          navigate('/');
-          return;
-        }
-        const errorData = await response.json();
-        console.error('설정 저장 실패:', errorData);
-        alert('설정 저장에 실패했습니다.');
-        return;
-      }
-      console.log(selectedOption)
-      alert(`설정이 저장되었습니다: ${selectedOption}`);
-    } catch (error) {
+      // Axios는 2xx 응답이면 .ok 확인 없이 바로 다음으로 넘어감
+      // 401 같은 에러는 apiClient 인터셉터가 잡아서 처리
+      console.log('설정 저장 성공:', response.data);
+      alert(`설정이 완료되었습니다!`);
+    } catch (error: any) { // Axios 에러 처리
       console.error('서버와의 통신 중 오류 발생:', error);
-      alert('서버와의 통신에 문제가 발생했습니다.');
-      navigate('/');
+
+      if (error.response && error.response.status === 401) {
+        alert('세션이 만료되어 설정을 저장할 수 없습니다. 다시 로그인해주세요.');
+        navigate('/');
+      } else {
+        alert('설정 저장에 실패했습니다. 다시 시도해주세요.');
+      }
     }
   };
 

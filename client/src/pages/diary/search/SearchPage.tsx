@@ -3,8 +3,9 @@ import { useState } from "react";
 import Header from '../../header/Header.tsx';
 import './SearchPage.css';
 import { CategoryTags, initialCategoryTags } from "../diaryEditor/TagData.ts";
-import {handleRemoveTag} from "../diaryEditor/TagHandler.ts"; // Keep handleRemoveTag as is
+import {handleRemoveTag} from "../diaryEditor/TagHandler.ts";
 import { useNavigate } from 'react-router-dom';
+import apiClient from '../../../utils/axiosInstance.ts'; // apiClient 임포트 경로 확인!
 
 const SearchPage: React.FC = () => {
     const navigate = useNavigate();
@@ -12,45 +13,50 @@ const SearchPage: React.FC = () => {
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [selectedTags, setSelectedTags] = useState<{ id: number; emoji: string; label: string }[]>([]);
     const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
-    const accessToken = localStorage.getItem("accessToken");
     const [categoryTags, setCategoryTags] = useState<CategoryTags>(initialCategoryTags);
     const [searchResults, setSearchResults] = useState<{ diaryId: number; title: string; date: string }[]>([]);
 
     useEffect(() => {
-        fetch('http://localhost:8080/api/category/6' , {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            },
-            credentials: "include"
-        })
-            .then(async response => {
-                if (response.status === 204) {
-                    return [];
-                } else if (!response.ok) {
-                    throw new Error('서버 오류');
+        const fetchCategories = async () => {
+            try {
+                // fetch 대신 apiClient 사용
+                const response = await apiClient.get('/api/category/6');
+
+                if (response.status === 204 || (response.data && Object.keys(response.data).length === 0)) {
+                    // 204 No Content 또는 빈 응답 데이터인 경우
+                    setCategoryTags(prev => ({ ...prev, '기타': [] }));
+                } else {
+                    const data = response.data; // Axios는 응답 본문을 .data에 넣어줌
+                    console.log('서버에서 가져온 태그 데이터:', data);
+
+                    const newTag = data.map((tag: any) => ({
+                        id: tag.tagId,
+                        emoji: '🏷️',
+                        label: tag.name
+                    }));
+
+                    setCategoryTags(prev => ({
+                        ...prev,
+                        '기타': newTag
+                    }));
                 }
-                return await response.json();
-            })
-            .then(data => {
-                console.log('서버에서 가져온 태그 데이터:', data);
-
-                const newTag = data.map((tag: any) => ({
-                    id: tag.tagId,
-                    emoji: '🏷️',
-                    label: tag.name
-                }));
-
-                setCategoryTags(prev => ({
-                    ...prev,
-                    '기타': newTag
-                }));
-            })
-            .catch(error => {
+            } catch (error: any) { // Axios 에러 처리
                 console.error('기타 태그 불러오기 실패:', error);
-            });
-    }, []);
+                // 401 에러는 apiClient 인터셉터에서 처리되므로 여기서는 다른 오류에 대한 처리만
+                if (error.response && error.response.status === 401) {
+                    // 이 코드는 실행되지 않을 가능성이 높지만, 명시적으로 남겨둠
+                    alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+                    navigate('/');
+                } else {
+                    alert('태그 정보를 불러오는 데 실패했습니다.');
+                }
+            }
+        };
 
-    const handleSearch = () => {
+        fetchCategories();
+    }, [navigate]); // navigate를 의존성 배열에 추가 (혹시 모를 리다이렉트 상황 대비)
+
+    const handleSearch = async () => {
         if (selectedTagIds.length === 0) {
             alert("태그를 하나 이상 선택해주세요.");
             return;
@@ -58,39 +64,32 @@ const SearchPage: React.FC = () => {
 
         const queryParams = selectedTagIds.map(id => `tags=${id}`).join('&');
 
-        fetch(`http://localhost:8080/api/tag/search?${queryParams}`, {
-            method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            },
-            credentials: "include"
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("검색 실패");
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log("검색 결과:", data);
-                setSearchResults(data);
-            })
-            .catch(error => {
-                console.error("검색 오류:", error);
-            });
+        try {
+            // fetch 대신 apiClient 사용
+            const response = await apiClient.get(`/api/tag/search?${queryParams}`);
+
+            const data = response.data; // Axios는 응답 본문을 .data에 넣어줌
+            console.log("검색 결과:", data);
+            setSearchResults(data);
+        } catch (error: any) { // Axios 에러 처리
+            console.error("검색 오류:", error);
+            if (error.response && error.response.status === 401) {
+                alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+                navigate('/');
+            } else {
+                alert("검색에 실패했습니다. 다시 시도해주세요.");
+            }
+        }
     };
 
-    // Modified handleTagClick function
+    // Modified handleTagClick function (변경 없음)
     const handleTagClick = (tag: { id: number; emoji: string; label: string }) => {
-        // Check if the tag is already selected
         const isSelected = selectedTagIds.includes(tag.id);
 
         if (isSelected) {
-            // If already selected, remove it
             setSelectedTags(prev => prev.filter(t => t.id !== tag.id));
             setSelectedTagIds(prev => prev.filter(id => id !== tag.id));
         } else {
-            // If not selected, check the limit before adding
             if (selectedTags.length < 5) {
                 setSelectedTags(prev => [...prev, tag]);
                 setSelectedTagIds(prev => [...prev, tag.id]);
@@ -139,11 +138,12 @@ const SearchPage: React.FC = () => {
 
                 {selectedCategory && (
                     <div className="tag-wrapper">
+                        {/* categoryTags[selectedCategory]가 undefined일 경우를 대비하여 ? 체이닝 사용 */}
                         {categoryTags[selectedCategory]?.map((tag) => (
                             <span
                                 key={tag.id}
                                 className={`tag-button ${selectedTagIds.includes(tag.id) ? "active" : ""}`}
-                                onClick={() => handleTagClick(tag)} // Call the local handleTagClick
+                                onClick={() => handleTagClick(tag)}
                                 data-id={tag.id}
                             >
                                 {tag.emoji} {tag.label}
