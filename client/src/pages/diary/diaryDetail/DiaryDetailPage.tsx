@@ -80,7 +80,7 @@ const DiaryDetailPage: React.FC = () => {
                 {/* 태그 목록 */}
                 <div className="selected-tags">
                     {diaryData?.tags.map((tag, index) => (
-                        <div key={index} className="tag">#{tag}</div>
+                        <div key={index} className="diary-tags">#{tag}</div>
                     ))}
                 </div>
             </div>

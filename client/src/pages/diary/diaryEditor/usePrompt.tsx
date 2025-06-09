@@ -1,6 +1,5 @@
 import { useContext, useEffect } from 'react';
-import { UNSAFE_NavigationContext as NavigationContext } from 'react-router-dom';
-import type { Location } from 'react-router-dom';
+import {UNSAFE_NavigationContext as NavigationContext, Location} from 'react-router-dom';
 
 export function usePrompt(
     when: boolean,

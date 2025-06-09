@@ -46,7 +46,7 @@ export const DiaryEditorPage: React.FC = () => {
 
                 // 2. 질문 타이틀 설정
                 if (questionText) {
-                    setTitle(decodeURIComponent(questionText) + '?');
+                    setTitle(decodeURIComponent(questionText));
                 }
 
                 // 3. 에디터 초기화
@@ -102,9 +102,11 @@ export const DiaryEditorPage: React.FC = () => {
         return () => {
             destroyEditor();
         };
+
     }, [questionText, navigate]); // 의존성 배열에 questionText와 navigate 유지
 
     // shouldNavigate 및 pendingNavigation 처리 로직은 변경 없음
+
     useEffect(() => {
         if (shouldNavigate && pendingNavigation) {
             pendingNavigation();
@@ -302,7 +304,7 @@ export const DiaryEditorPage: React.FC = () => {
                         {title}
                     </h1>
                 )}
-                <p className="date">{formattedDate}</p>
+                <p className="editor-date">{formattedDate}</p>
                 <div
                     className="editor-container"
                     ref={editorContainerRef}
@@ -331,16 +333,20 @@ export const DiaryEditorPage: React.FC = () => {
 
                     {selectedCategory && (
                         <div className="tag-section">
-                            {categoryTags[selectedCategory].map((tag) => (
-                                <span
-                                    key={tag.id}
-                                    className="category-tag"
-                                    onClick={() => handleTagClick(tag, selectedTags, selectedTagIds, setSelectedTags, setSelectedTagIds)}
-                                    data-id={tag.id}
-                                >
-                                    {tag.emoji} {tag.label}
-                                </span>
-                            ))}
+                            {categoryTags[selectedCategory].map((tag) => {
+                                const isActive = selectedTagIds.includes(tag.id); // 혹은 selectedTags에서 확인
+
+                                return (
+                                    <span
+                                        key={tag.id}
+                                        className={`category-tag ${isActive ? 'active' : ''}`}
+                                        onClick={() => handleTagClick(tag, selectedTags, selectedTagIds, setSelectedTags, setSelectedTagIds)}
+                                        data-id={tag.id}
+                                    >
+                                        {tag.emoji} {tag.label}
+                                    </span>
+                                );
+                            })}
                         </div>
                     )}
 

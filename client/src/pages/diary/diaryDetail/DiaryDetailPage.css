@@ -24,25 +24,22 @@
     background: none;
     border: none;
     cursor: pointer;
-    outline: none; /* 클릭 시 생기는 외곽선 제거 */
-    transition: transform 0.2s ease; /* 호버시 부드럽게 커지는 애니메이션 효과 */
-    z-index: 1000; /* 추가 */
+    outline: none;
+    transition: transform 0.2s ease;
+    z-index: 1000;
 }
 
-/* 버튼에 호버 효과를 적용 */
 .backButton:hover {
-    transform: scale(1.1); /* 호버 시 크기 1.2배로 커짐 */
+    transform: scale(1.1);
 }
 
-/* 버튼이 눌렸을 때의 기본 효과 */
 .backButton:active {
-    background: none; /* 눌렀을 때 배경색 제거 */
-    transform: scale(1); /* 눌렀을 때 크기는 원래 크기로 유지 */
-    outline: none;  /* 클릭 시 외곽선 제거 */
-    box-shadow: none; /* 그림자 제거 */
+    background: none;
+    transform: scale(1);
+    outline: none;
+    box-shadow: none;
 }
 
-/* 버튼에 포커스가 갔을 때의 외곽선도 제거 */
 .backButton:focus {
     outline: none;
 }
@@ -50,14 +47,14 @@
 .title {
     font-size: 28px;
     font-weight: bold;
-    margin: 40px 0 8px 0; /* 위쪽 간격 추가 */
+    margin: 40px 0 8px 0;
     text-align: left;
 }
 
 .date {
     color: #999;
     font-size: 15px;
-    margin-top: 10px; /* 추가 */
+    margin-top: 10px;
     margin-bottom: 10px;
     text-align: left;
 }
@@ -67,7 +64,7 @@
     border-radius: 8px;
     padding: 16px;
     width: 100%;
-    height: 540px; /* 고정 높이 */
+    height: 540px;
     box-sizing: border-box;
 }
 
@@ -113,24 +110,19 @@
     margin-top: 10px !important;
 }
 
-.tag {
-    background-color: #ffecec;
-    color: #eb1c24;
+.diary-tags {
+    background-color: white;
+    color: #333;
+    border: 0.2rem solid #eb1c24;
     padding: 10px 20px;
     border-radius: 25px;
     font-size: 16px;
-    font-weight: 500;
-    border: 1.5px solid #eb1c24;
     cursor: pointer;
     transition: background-color 0.2s ease;
+    font-weight: bold;
 }
 
-.tag:hover {
-    background-color: #eb1c24;
-    color: white;
-}
-
-/* 모바일 화면에서는 뒤로가기 버튼이 맨 위에 오도록 수정 */
+/* 모바일 화면 */
 @media (max-width: 768px) {
     .backButton {
         position: absolute;
