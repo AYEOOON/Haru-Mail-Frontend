@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Header from '../../header/Header';
 import './ListPage.css';
 import { useNavigate } from 'react-router-dom';
+import apiClient from '../../../utils/axiosInstance.ts'; // apiClient 임포트 경로 확인!
 
 interface DiaryItem {
   id: number;
@@ -34,49 +35,33 @@ const ListPage: React.FC = () => {
     async function fetchData() {
       try {
         setLoading(true);
-        // 1) 사용자 정보 호출
-        const userRes = await fetch('http://localhost:8080/api/auth/me', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include', // 쿠키 자동 전송
-        });
 
-        if (!userRes.ok) {
-          console.error('사용자 정보 호출 실패:', userRes.status, userRes.statusText);
-          alert('로그인이 필요하거나 세션이 만료되었습니다. 다시 로그인해주세요.');
-          navigate('/');
-          return;
-        }
-        const userData: UserInfo = await userRes.json();
-        setUser(userData);
+        // 1) 사용자 정보 호출
+        // fetch 대신 apiClient 사용
+        const userRes = await apiClient.get<UserInfo>('/api/auth/me'); // UserInfo 타입을 명시하여 타입 안정성 확보
+        setUser(userRes.data); // Axios는 응답 본문을 .data에 넣어줌
 
         // 2) 월과 연도를 쿼리 파라미터로 전달하여 일기 목록 호출
-        const diaryRes = await fetch(
-          `http://localhost:8080/api/diary/list?year=${currentYear}&month=${currentMonth}`,
-          {
-            method: 'GET',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            credentials: 'include', // 쿠키 자동 전송
-          }
+        // fetch 대신 apiClient 사용
+        const diaryRes = await apiClient.get<DiaryItem[]>(
+          `/api/diary/list?year=${currentYear}&month=${currentMonth}`
         );
+        setDiaries(diaryRes.data); // Axios는 응답 본문을 .data에 넣어줌
 
-        if (!diaryRes.ok) {
-          console.error('일기 목록 호출 실패:', diaryRes.status, diaryRes.statusText);
-          alert('일기 목록을 불러오는 데 실패했습니다. 다시 로그인해주세요.');
-          navigate('/');
-          return;
-        }
-        const diaryData: DiaryItem[] = await diaryRes.json();
-
-        setDiaries(diaryData);
-      } catch (error) {
+      } catch (error: any) { // Axios 에러를 처리하기 위해 타입을 any로 지정
         console.error('API 호출 중 오류 발생:', error);
-        alert('페이지 로딩 중 오류가 발생했습니다. 다시 시도해주세요.');
-        navigate('/');
+
+        // apiClient 인터셉터에서 401 Unauthorized 에러를 처리하고 로그인 페이지로 리다이렉트
+        // 따라서 여기서는 401을 명시적으로 처리할 필요는 없지만,
+        // 인터셉터에서 잡지 못하는 다른 종류의 에러(예: 네트워크 연결 끊김)에 대비
+        if (error.response && error.response.status === 401) {
+          // 이 코드는 사실상 실행되지 않을 가능성이 높지만, 명시적으로 남겨둠
+          alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+          navigate('/');
+        } else {
+          alert('페이지 로딩 중 오류가 발생했습니다. 다시 시도해주세요.');
+          navigate('/');
+        }
       } finally {
         setLoading(false);
       }
@@ -88,7 +73,7 @@ const ListPage: React.FC = () => {
     }
   }, [currentYear, currentMonth, navigate]); // currentYear, currentMonth 변경 시 fetchData 재실행
 
-  // 이전 달로 이동
+  // 이전 달로 이동 (변경 없음)
   const handlePrevMonth = () => {
     setCurrentMonth(prevMonth => {
       if (prevMonth === 1) {
@@ -100,7 +85,7 @@ const ListPage: React.FC = () => {
     });
   };
 
-  // 다음 달로 이동
+  // 다음 달로 이동 (변경 없음)
   const handleNextMonth = () => {
     setCurrentMonth(prevMonth => {
       if (prevMonth === 12) {

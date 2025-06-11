@@ -104,7 +104,6 @@ const HomePage: React.FC = () => {
           <a href="/" className="homepage-logo" style={{ textDecoration: 'none' }}>
             <h2>하루 메일</h2>
           </a>
-          <button className="login-button" onClick={handleJustLogin}>로그인</button>
         </div>
       </header>
 
