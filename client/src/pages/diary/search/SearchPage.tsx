@@ -15,6 +15,8 @@ const SearchPage: React.FC = () => {
     const accessToken = localStorage.getItem("accessToken");
     const [categoryTags, setCategoryTags] = useState<CategoryTags>(initialCategoryTags);
     const [searchResults, setSearchResults] = useState<{ diaryId: number; title: string; date: string }[]>([]);
+    const [isTagLimitModalOpen, setIsTagLimitModalOpen] = useState(false);
+    const [isNoTagModalOpen, setIsNoTagModalOpen] = useState(false);
 
     useEffect(() => {
         fetch('http://localhost:8080/api/category/6' , {
@@ -50,9 +52,14 @@ const SearchPage: React.FC = () => {
             });
     }, []);
 
+    // 태그 없을 시
+    const openNoTagSelectedModal = () => {
+        setIsNoTagModalOpen(true);
+    };
+
     const handleSearch = () => {
         if (selectedTagIds.length === 0) {
-            alert("태그를 하나 이상 선택해주세요.");
+            openNoTagSelectedModal();
             return;
         }
 
@@ -80,24 +87,25 @@ const SearchPage: React.FC = () => {
             });
     };
 
-    // Modified handleTagClick function
     const handleTagClick = (tag: { id: number; emoji: string; label: string }) => {
-        // Check if the tag is already selected
         const isSelected = selectedTagIds.includes(tag.id);
 
         if (isSelected) {
-            // If already selected, remove it
             setSelectedTags(prev => prev.filter(t => t.id !== tag.id));
             setSelectedTagIds(prev => prev.filter(id => id !== tag.id));
         } else {
-            // If not selected, check the limit before adding
             if (selectedTags.length < 5) {
                 setSelectedTags(prev => [...prev, tag]);
                 setSelectedTagIds(prev => [...prev, tag.id]);
             } else {
-                alert("태그는 5개까지만 선택할 수 있습니다.");
+                openTagLimitModal();
             }
         }
+    };
+
+    // 태그 갯수 제한 모달
+    const openTagLimitModal = () => {
+        setIsTagLimitModalOpen(true);
     };
 
     return (
@@ -107,7 +115,7 @@ const SearchPage: React.FC = () => {
                 <div className="search-bar">
                     <div className="selected-tags-container">
                         {selectedTags.length === 0 ? (
-                            <span className="placeholder-text">태그를 선택해주세요^^</span>
+                            <span className="placeholder-text">태그를 선택해 주세요^^</span>
                         ) : (
                             selectedTags.map((tag) => (
                                 <span key={tag.id} className="selected-tag">
@@ -186,6 +194,23 @@ const SearchPage: React.FC = () => {
                     <div className="no-results-message">검색 결과가 없습니다.</div>
                 )}
 
+                {isNoTagModalOpen && (
+                    <div className="modal-overlay">
+                        <div className="modal">
+                            <p>태그를 하나 이상 선택해 주세요.</p>
+                            <button className="modal-close-button" onClick={() => setIsNoTagModalOpen(false)}>닫기</button>
+                        </div>
+                    </div>
+                )}
+
+                {isTagLimitModalOpen && (
+                    <div className="modal-overlay">
+                        <div className="modal">
+                            <p>태그는 최대 5개까지만 선택할 수 있습니다.</p>
+                            <button className="modal-close-button" onClick={() => setIsTagLimitModalOpen(false)}>확인</button>
+                        </div>
+                    </div>
+                )}
             </main>
         </div>
     );
