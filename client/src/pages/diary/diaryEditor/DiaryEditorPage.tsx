@@ -306,7 +306,7 @@ export const DiaryEditorPage: React.FC = () => {
                         autoFocus
                     />
                 ) : (
-                    <h1 className="title" onClick={() => setIsEditingTitle(true)}>
+                    <h1 className="editor-title" onClick={() => setIsEditingTitle(true)}>
                         {title}
                     </h1>
                 )}
