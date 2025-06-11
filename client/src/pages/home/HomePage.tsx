@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './HomePage.css';
-import apiClient from '../../utils/axiosInstance'; // ⭐ axiosInstance 임포트 경로 확인!
 import plainApiClient from '../../utils/plainApiClient'; // ⭐ axiosInstance 임포트 경로 확인!
 
 
@@ -199,6 +198,13 @@ const HomePage: React.FC = () => {
       handleSubscribeClick(); // 구독 모달 열기
   }
 
+  const setSectionRef = (el: HTMLElement | null): void => {
+    sectionRefs.current[0] = el;
+  };
+
+  const setSectionRef2 = (el: HTMLElement | null): void => {
+    sectionRefs.current[1] = el;
+  };
 
   return (
     <div className="webpage-layout">
@@ -236,7 +242,7 @@ const HomePage: React.FC = () => {
       </div>
 
       <section
-        ref={el => sectionRefs.current[0] = el}
+        ref={setSectionRef}
         id="section-0"
         className={`scroll-section ${visibleSections['section-0'] ? 'is-visible' : ''}`}
       >
@@ -289,7 +295,7 @@ const HomePage: React.FC = () => {
       </section>
 
       <section
-        ref={el => sectionRefs.current[1] = el}
+        ref={setSectionRef2}
         id="section-1"
         className={`scroll-section ${visibleSections['section-1'] ? 'is-visible' : ''}`}
       >

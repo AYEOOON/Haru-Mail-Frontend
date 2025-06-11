@@ -151,7 +151,7 @@ const SearchPage: React.FC = () => {
                 {selectedCategory && (
                     <div className="tag-wrapper">
                         {/* categoryTags[selectedCategory]가 undefined일 경우를 대비하여 ? 체이닝 사용 */}
-                        {categoryTags[selectedCategory]?.map((tag) => (
+                        {categoryTags[selectedCategory as keyof CategoryTags].map((tag) => (
                             <span
                                 key={tag.id}
                                 className={`tag-button ${selectedTagIds.includes(tag.id) ? "active" : ""}`}
