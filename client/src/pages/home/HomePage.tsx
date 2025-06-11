@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import './HomePage.css';
 import apiClient from '../../utils/axiosInstance'; // ⭐ axiosInstance 임포트 경로 확인!
+import plainApiClient from '../../utils/plainApiClient'; // ⭐ axiosInstance 임포트 경로 확인!
+
 
 const HomePage: React.FC = () => {
   // ⭐ 구독 모달 관련 상태
@@ -164,7 +166,7 @@ const HomePage: React.FC = () => {
 
     try {
       // ⭐ 백엔드로 보낼 때도 loginEmail 사용
-      const response = await apiClient.get(`/api/auth/verify?email=${encodeURIComponent(loginEmail)}`);
+      const response = await plainApiClient.get(`/api/auth/verify?email=${encodeURIComponent(loginEmail)}`);
 
       if (response.status === 200 && response.data.status === 'verified') {
         setIsEmailVerified(true); // ⭐ 이메일 확인 성공 (구독자)
