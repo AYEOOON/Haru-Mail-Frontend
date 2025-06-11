@@ -15,6 +15,8 @@ const SearchPage: React.FC = () => {
     const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
     const [categoryTags, setCategoryTags] = useState<CategoryTags>(initialCategoryTags);
     const [searchResults, setSearchResults] = useState<{ diaryId: number; title: string; date: string }[]>([]);
+    const [isTagLimitModalOpen, setIsTagLimitModalOpen] = useState(false);
+    const [isNoTagModalOpen, setIsNoTagModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchCategories = async () => {
@@ -56,9 +58,14 @@ const SearchPage: React.FC = () => {
         fetchCategories();
     }, [navigate]); // navigate를 의존성 배열에 추가 (혹시 모를 리다이렉트 상황 대비)
 
+    // 태그 미선택 시
+    const openNoTagSelectedModal = () => {
+        setIsNoTagModalOpen(true);
+    };
+
     const handleSearch = async () => {
         if (selectedTagIds.length === 0) {
-            alert("태그를 하나 이상 선택해주세요.");
+            openNoTagSelectedModal();
             return;
         }
 
@@ -94,9 +101,14 @@ const SearchPage: React.FC = () => {
                 setSelectedTags(prev => [...prev, tag]);
                 setSelectedTagIds(prev => [...prev, tag.id]);
             } else {
-                alert("태그는 5개까지만 선택할 수 있습니다.");
+                openTagLimitModal();
             }
         }
+    };
+
+    // 태그 갯수 제한 모달
+    const openTagLimitModal = () => {
+        setIsTagLimitModalOpen(true);
     };
 
     return (
@@ -186,6 +198,23 @@ const SearchPage: React.FC = () => {
                     <div className="no-results-message">검색 결과가 없습니다.</div>
                 )}
 
+                {isNoTagModalOpen && (
+                    <div className="modal-overlay">
+                        <div className="modal">
+                            <p>태그를 하나 이상 선택해 주세요.</p>
+                            <button className="modal-close-button" onClick={() => setIsNoTagModalOpen(false)}>닫기</button>
+                        </div>
+                    </div>
+                )}
+
+                {isTagLimitModalOpen && (
+                    <div className="modal-overlay">
+                        <div className="modal">
+                            <p>태그는 최대 5개까지만 선택할 수 있습니다.</p>
+                            <button className="modal-close-button" onClick={() => setIsTagLimitModalOpen(false)}>확인</button>
+                        </div>
+                    </div>
+                )}
             </main>
         </div>
     );

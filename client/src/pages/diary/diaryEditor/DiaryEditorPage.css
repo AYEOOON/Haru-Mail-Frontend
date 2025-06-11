@@ -48,7 +48,7 @@ html, body {
     margin-bottom: 20px;
 }
 
-.title {
+.editor-title {
     font-size: 24px !important;
     font-weight: bold;
     margin-top: 10px !important;
@@ -183,6 +183,12 @@ html, body {
     font-size: 16px;
     width: 80px;
 }
+
+.modal-close-button:hover {
+    background-color: #c6171d;
+    transform: scale(1.1);
+}
+
 
 /* 태그 */
 .tag-section {

@@ -67,7 +67,7 @@ const DiaryDetailPage: React.FC = () => {
             </button>
             <div className="container">
                 {/* 일기 제목 */}
-                <h1 className="title">{diaryData?.title || '일기 제목 불러오는 중...'}</h1>
+                <h1 className="detailPage-title">{diaryData?.title || '일기 제목 불러오는 중...'}</h1>
                 {/* 일기 날짜 */}
                 <p className="date">{diaryData?.date ? formatDate(diaryData.date) : '날짜 불러오는 중...'}</p>
                 <div className="viewerWrapper">
