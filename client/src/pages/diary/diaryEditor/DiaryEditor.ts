@@ -1,4 +1,4 @@
-import EditorJS from '@editorjs/editorjs';
+import EditorJS, {BlockToolConstructable} from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import List from '@editorjs/list';
 import Image from '@editorjs/image';
@@ -26,7 +26,7 @@ export const initializeEditor = (holder: HTMLElement, onChange: () => void) => {
             list: List,
             marker: Marker,
             ColorPicker: {
-                class: ColorPicker
+                class: ColorPicker as unknown as BlockToolConstructable
             },
             image: {
                 class: Image,
