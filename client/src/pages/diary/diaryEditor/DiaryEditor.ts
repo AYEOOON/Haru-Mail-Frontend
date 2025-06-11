@@ -2,6 +2,9 @@ import EditorJS from '@editorjs/editorjs';
 import Header from '@editorjs/header';
 import List from '@editorjs/list';
 import Image from '@editorjs/image';
+import Marker from '@editorjs/marker';
+import ColorPicker from 'editorjs-color-picker';
+import Underline from '@editorjs/underline';
 
 export let editor: EditorJS | null = null; // 에디터 인스턴스 (전역 참조용)
 let isInitializing = false; // 중복 초기화를 방지하기 위한 플래그
@@ -18,8 +21,13 @@ export const initializeEditor = (holder: HTMLElement, onChange: () => void) => {
     const instance = new EditorJS({
         holder,
         tools: {
+            underline: Underline,
             header: Header,
             list: List,
+            marker: Marker,
+            ColorPicker: {
+                class: ColorPicker
+            },
             image: {
                 class: Image,
                 config: {
