@@ -40,22 +40,17 @@ export const DiaryEditorPage: React.FC = () => {
             try {
                 setLoading(true);
 
-                // 1. 인증 확인
-                // fetch 대신 apiClient 사용
-                const userRes = await apiClient.get('/api/auth/me'); // credentials: 'include'는 apiClient에 설정되어 있음
-                // userRes.ok 대신 axios의 성공 여부 판단 (에러가 나면 catch 블록으로 이동)
-
-                // 2. 질문 타이틀 설정
+                // 1. 질문 타이틀 설정
                 if (questionText) {
                     setTitle(decodeURIComponent(questionText));
                 }
 
-                // 3. 에디터 초기화
+                // 2. 에디터 초기화
                 if (editorContainerRef.current) {
                     initializeEditor(editorContainerRef.current, onEditorChange);
                 }
 
-                // 4. 기타 태그 불러오기
+                // 3. 기타 태그 불러오기
                 const response = await apiClient.get('/api/category/6');
 
                 // Axios는 204 No Content 응답 시 res.data가 빈 객체가 될 수 있음
@@ -339,7 +334,7 @@ export const DiaryEditorPage: React.FC = () => {
 
                     {selectedCategory && (
                         <div className="tag-section">
-                            {categoryTags[selectedCategory].map((tag) => {
+                            {categoryTags[selectedCategory as keyof CategoryTags].map((tag) => {
                                 const isActive = selectedTagIds.includes(tag.id); // 혹은 selectedTags에서 확인
 
                                 return (
