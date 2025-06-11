@@ -84,7 +84,7 @@ axiosInstance.interceptors.response.use(
 
         // 사용자에게 재로그인 요청 (예: 로그인 페이지로 리다이렉트)
         alert('세션이 만료되었습니다. 다시 로그인해주세요.');
-        window.location.href = '/login'; // 로그인 페이지 경로로 변경
+        window.location.href = '/'; // 로그인 페이지 경로로 변경
         return Promise.reject(reissueError); // 에러 전파
       } finally {
         isRefreshing = false; // 재발급 요청 완료
