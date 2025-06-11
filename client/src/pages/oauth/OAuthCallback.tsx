@@ -1,12 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-// UserInfo 인터페이스는 컴포넌트 외부에 한 번만 정의
-interface UserInfo {
-  username: string;
-  email: string;
-}
-
 const OAuthCallback: React.FC = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(true);
@@ -34,7 +28,7 @@ const OAuthCallback: React.FC = () => {
           }
           throw new Error(`User fetch failed: ${userRes.status} - ${errorText}`);
         }
-        const userData: UserInfo = await userRes.json();
+        //const userData: UserInfo = await userRes.json();
         // setUser(userData); // 사용자 정보를 전역 상태에 저장 (Context, Redux 등)
 
         // 2) 로컬 스토리지에서 구독 설정 정보 가져오기

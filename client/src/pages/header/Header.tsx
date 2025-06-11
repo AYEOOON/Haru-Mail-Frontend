@@ -9,7 +9,6 @@ const Header: React.FC = () => {
     const [menuOpen, setMenuOpen] = useState<boolean>(false);
 
     const navRef = useRef<HTMLDivElement>(null);
-    const headerRef = useRef<HTMLDivElement>(null);
 
     // 쿠키에서 토큰을 읽는 함수
     const getAccessTokenFromCookies = (): string => {
