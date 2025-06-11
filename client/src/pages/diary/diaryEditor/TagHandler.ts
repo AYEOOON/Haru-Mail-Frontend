@@ -5,7 +5,8 @@ export function handleTagClick (tag: Tag,
                                 selectedTags: Tag[],
                                 selectedTagIds: number[],
                                 setSelectedTags: (tags: Tag[]) => void,
-                                setSelectedTagIds: (ids: number[]) => void) {
+                                setSelectedTagIds: (ids: number[]) => void,
+                                openTagLimitModal: () => void) {
     // 이미 선택된 태그인지 확인
     const alreadySelected = selectedTags.some((t) => t.id === tag.id);
 
@@ -19,7 +20,7 @@ export function handleTagClick (tag: Tag,
         console.log("선택된 태그:", updatedTags); // 디버깅용
     } else { // 선택되지 않은 태그인 경우: 선택 추가
         if (selectedTags.length >= 10) {
-            alert("태그는 최대 10개까지만 선택할 수 있습니다.");
+            openTagLimitModal();
             return;
         }
 

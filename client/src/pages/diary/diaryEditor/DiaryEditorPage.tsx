@@ -18,6 +18,7 @@ export const DiaryEditorPage: React.FC = () => {
     const [showAddCategoryButton, setShowAddCategoryButton] = useState<boolean>(false);
     const [selectedTags, setSelectedTags] = useState<{ id: number; emoji: string; label: string }[]>([]);
     const [selectedTagIds, setSelectedTagIds] = useState<number[]>([]);
+    const [isTagLimitModalOpen, setIsTagLimitModalOpen] = useState(false);
 
     const [isAddingTag, setIsAddingTag] = useState(false);
     const [newTagName, setNewTagName] = useState("");
@@ -301,6 +302,11 @@ export const DiaryEditorPage: React.FC = () => {
         setShowLeaveModal(false);
     };
 
+    // 태그 갯수 제한 모달
+    const openTagLimitModal = () => {
+        setIsTagLimitModalOpen(true);
+    };
+
     return (
         <div className="diary-page">
             <Header />
@@ -356,7 +362,7 @@ export const DiaryEditorPage: React.FC = () => {
                                     <span
                                         key={tag.id}
                                         className={`category-tag ${isActive ? 'active' : ''}`}
-                                        onClick={() => handleTagClick(tag, selectedTags, selectedTagIds, setSelectedTags, setSelectedTagIds)}
+                                        onClick={() => handleTagClick(tag, selectedTags, selectedTagIds, setSelectedTags, setSelectedTagIds, openTagLimitModal)}
                                         data-id={tag.id}
                                     >
                                         {tag.emoji} {tag.label}
@@ -417,6 +423,15 @@ export const DiaryEditorPage: React.FC = () => {
             {loading && (
                 <div className="loading-overlay">
                     <div className="loading-spinner">로딩 중...</div>
+                </div>
+            )}
+
+            {isTagLimitModalOpen && (
+                <div className="modal-overlay">
+                    <div className="modal">
+                        <p>태그는 최대 10개까지만 선택할 수 있습니다.</p>
+                        <button className="modal-close-button" onClick={() => setIsTagLimitModalOpen(false)}>확인</button>
+                    </div>
                 </div>
             )}
         </div>
